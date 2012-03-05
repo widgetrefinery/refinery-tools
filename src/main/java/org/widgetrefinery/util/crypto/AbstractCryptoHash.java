@@ -62,17 +62,4 @@ public abstract class AbstractCryptoHash implements CryptoHash {
     protected abstract byte[] computeHash(final InputStream input) throws IOException;
 
     protected abstract byte[] computeHash(final byte[] input);
-
-    @Override
-    public String toString(final byte[] input) {
-        StringBuilder sb = new StringBuilder();
-        for (byte value : input) {
-            String hex = Integer.toHexString(0xFF & (int) value);
-            if (1 == hex.length()) {
-                sb.append('0');
-            }
-            sb.append(hex);
-        }
-        return sb.toString();
-    }
 }

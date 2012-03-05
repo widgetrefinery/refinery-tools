@@ -20,6 +20,7 @@ package org.widgetrefinery.util.crypto;
 import junit.framework.TestCase;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.widgetrefinery.util.StringUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -31,7 +32,7 @@ public class TestCRC32CryptoHash extends TestCase {
     public void testGetHash() throws Exception {
         CryptoHash cryptoHash = new CRC32CryptoHash();
         byte[] result = cryptoHash.getHash("foobar");
-        assertEquals("9ef61f95", cryptoHash.toString(result));
+        assertEquals("9ef61f95", StringUtil.toString(result));
     }
 
     public void testChainedGetHash() throws Exception {
@@ -46,7 +47,7 @@ public class TestCRC32CryptoHash extends TestCase {
 
         CryptoHash cryptoHash = new CRC32CryptoHash(mockedCryptoHash);
         byte[] result = cryptoHash.getHash(input);
-        assertEquals("9ef61f95", cryptoHash.toString(result));
+        assertEquals("9ef61f95", StringUtil.toString(result));
 
         context.assertIsSatisfied();
     }

@@ -17,6 +17,7 @@
 
 package org.widgetrefinery.util.crypto;
 
+import org.widgetrefinery.util.StringUtil;
 import org.widgetrefinery.util.clParser.*;
 
 import java.io.*;
@@ -181,7 +182,7 @@ public class CryptoHashCli {
         public void run() {
             try {
                 byte[] result = this.cryptoHash.getHash(this.inputStream);
-                this.result = this.cryptoHash.toString(result);
+                this.result = StringUtil.toString(result);
             } catch (Exception e) {
                 this.error = e;
             }

@@ -27,6 +27,4 @@ public interface CryptoHash {
     byte[] getHash(InputStream input) throws IOException;
 
     byte[] getHash(String input);
-
-    String toString(byte[] input);
 }

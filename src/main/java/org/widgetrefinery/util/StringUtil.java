@@ -32,4 +32,16 @@ public class StringUtil {
     public static String trimToEmpty(final String value) {
         return null != value ? value.trim() : "";
     }
+
+    public static String toString(final byte[] input) {
+        StringBuilder sb = new StringBuilder();
+        for (byte value : input) {
+            String hex = Integer.toHexString(0xFF & (int) value);
+            if (1 == hex.length()) {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
+    }
 }

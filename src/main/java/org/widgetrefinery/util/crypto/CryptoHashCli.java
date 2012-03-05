@@ -34,6 +34,9 @@ public class CryptoHashCli {
                                          new Argument("e|encoding",
                                                       new ListArgumentType(new StringArgumentType()),
                                                       "Provide a sequence of encodings to apply. Possible values are:\n\tc: crc32\n\tm: md5\n\ts: sha1"),
+                                         new Argument("s|string",
+                                                      new ListArgumentType(new StringArgumentType()),
+                                                      "Encodes the string supplied."),
                                          new Argument("h|help",
                                                       new BooleanArgumentType(),
                                                       "Displays this help message."));
@@ -46,20 +49,38 @@ public class CryptoHashCli {
 
         List<String> encodings = clParser.getValue("encoding");
         List<CryptoHash> cryptoHashes = buildCryptoHashes(encodings);
-
-        if (!clParser.getLeftovers().isEmpty()) {
-            for (String filename : clParser.getLeftovers()) {
-                List<String> results = processFile(filename, cryptoHashes);
-                StringBuilder sb = new StringBuilder(filename);
-                for (String result : results) {
-                    sb.append(' ').append(result);
+        if (!cryptoHashes.isEmpty()) {
+            boolean processStdnin = true;
+            if (!clParser.getLeftovers().isEmpty()) {
+                for (String filename : clParser.getLeftovers()) {
+                    List<String> results = processFile(filename, cryptoHashes);
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("file: ").append(filename);
+                    for (String result : results) {
+                        sb.append(' ').append(result);
+                    }
+                    System.out.println(sb.toString());
                 }
-                System.out.println(sb.toString());
+                processStdnin = false;
             }
-        } else {
-            List<String> results = processInputStream(System.in, cryptoHashes);
-            for (String result : results) {
-                System.out.println(result);
+            List<String> stringValues = clParser.getValue("string");
+            if (null != stringValues && !stringValues.isEmpty()) {
+                for (String stringValue : stringValues) {
+                    List<String> results = processInputStream(new ByteArrayInputStream(stringValue.getBytes()), cryptoHashes);
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("data: ").append(stringValue);
+                    for (String result : results) {
+                        sb.append(' ').append(result);
+                    }
+                    System.out.println(sb.toString());
+                }
+                processStdnin = false;
+            }
+            if (processStdnin) {
+                List<String> results = processInputStream(System.in, cryptoHashes);
+                for (String result : results) {
+                    System.out.println(result);
+                }
             }
         }
     }

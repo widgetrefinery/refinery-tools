@@ -17,21 +17,38 @@
 
 package org.widgetrefinery.util.clParser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Since: 3/3/12 11:36 PM
+ * Since: 3/4/12 7:31 PM
  */
-public class StringArgumentType extends AbstractArgumentType {
-    public StringArgumentType() {
-        super(true);
+public class ListArgumentType extends AbstractArgumentType {
+    private final ArgumentType listContentType;
+
+    public ListArgumentType(final ArgumentType listContentType) {
+        super(listContentType.isConsumesValue());
+        this.listContentType = listContentType;
     }
 
     @Override
     public String getGenericDescription() {
-        return "a string value";
+        return this.listContentType.getGenericDescription();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Object parse(final String value, final Object oldValue) {
-        return value.trim();
+        Object parsedValue = this.listContentType.parse(value, null);
+
+        List values;
+        if (null != oldValue && (oldValue instanceof List)) {
+            values = (List) oldValue;
+        } else {
+            values = new ArrayList<Object>();
+        }
+        values.add(parsedValue);
+
+        return values;
     }
 }

@@ -15,23 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.widgetrefinery.util.clParser;
+package org.widgetrefinery.util.crypto;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * Since: 3/3/12 11:36 PM
+ * Since: 3/4/12 7:37 PM
  */
-public class StringArgumentType extends AbstractArgumentType {
-    public StringArgumentType() {
-        super(true);
-    }
+public interface CryptoHash {
+    byte[] getHash(InputStream input) throws IOException;
 
-    @Override
-    public String getGenericDescription() {
-        return "a string value";
-    }
+    byte[] getHash(String input);
 
-    @Override
-    public Object parse(final String value, final Object oldValue) {
-        return value.trim();
-    }
+    String toString(byte[] input);
 }

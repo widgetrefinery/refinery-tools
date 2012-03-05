@@ -76,7 +76,7 @@ public class CLParser {
         } else if (2 == keyValuePair.length) {
             throw new RuntimeException("unexpected value for argument " + rawName + " (" + keyValuePair[1] + ')');
         } else {
-            argument.parse(rawName, null);
+            argument.parse(rawName, "");
         }
         this.hasArguments = true;
     }

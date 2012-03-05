@@ -39,9 +39,9 @@ public class Argument implements Comparable<Argument> {
         if (null == type) {
             throw new IllegalArgumentException("missing argument type for " + rawName);
         }
-        this.names = rawName.split("\\Q" + DELIMITER + "\\E");
+        this.names = rawName.trim().split("\\Q" + DELIMITER + "\\E");
         this.type = type;
-        this.description = null != description && !description.trim().isEmpty() ? description : type.getGenericDescription();
+        this.description = null != description && !description.trim().isEmpty() ? description.trim() : type.getGenericDescription();
     }
 
     public String[] getNames() {

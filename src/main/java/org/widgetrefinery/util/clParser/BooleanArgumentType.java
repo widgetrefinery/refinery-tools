@@ -20,18 +20,18 @@ package org.widgetrefinery.util.clParser;
 /**
  * Since: 3/3/12 8:47 PM
  */
-public class BooleanArgumentType extends ArgumentType {
+public class BooleanArgumentType extends AbstractArgumentType {
     public BooleanArgumentType() {
         super(false);
     }
 
     @Override
-    public String getDescription() {
-        return "a flag";
+    public String getGenericDescription() {
+        return "a boolean flag";
     }
 
     @Override
-    protected Object parse(final String value, final Object oldValue) {
+    public Object parse(final String value, final Object oldValue) {
         return Boolean.TRUE;
     }
 }

@@ -59,6 +59,28 @@ public class CLParser {
         }
     }
 
+    protected void parseLongArgument(final String longArgument) {
+        String[] keyValuePair = longArgument.split("=", 2);
+        String rawName = keyValuePair[0];
+        String name = rawName.substring(2);
+        Argument argument = this.arguments.get(name);
+        if (null == argument) {
+            throw new RuntimeException("invalid argument (" + rawName + ')');
+        } else if (argument.isConsumesValue()) {
+            if (2 == keyValuePair.length) {
+                String value = keyValuePair[1];
+                argument.parse(rawName, value);
+            } else {
+                throw new RuntimeException("missing value for argument " + rawName);
+            }
+        } else if (2 == keyValuePair.length) {
+            throw new RuntimeException("unexpected value for argument " + rawName + " (" + keyValuePair[1] + ')');
+        } else {
+            argument.parse(rawName, null);
+        }
+        this.hasArguments = true;
+    }
+
     protected void parseShortArgument(final String name, final Iterator<String> itr) {
         String rawName = "-" + name;
         Argument argument = this.arguments.get(name);
@@ -77,29 +99,7 @@ public class CLParser {
         this.hasArguments = true;
     }
 
-    protected void parseLongArgument(final String longArgument) {
-        String[] keyValuePair = longArgument.split("=", 2);
-        String rawName = keyValuePair[0];
-        String name = rawName.substring(2);
-        Argument argument = this.arguments.get(name);
-        if (null == argument) {
-            throw new RuntimeException("invalid argument (" + rawName + ')');
-        } else if (argument.isConsumesValue()) {
-            if (2 == keyValuePair.length) {
-                String value = keyValuePair[1];
-                argument.parse(rawName, value);
-            } else {
-                throw new RuntimeException("missing value for argument " + rawName);
-            }
-        } else if (2 == keyValuePair.length) {
-            throw new RuntimeException("argument " + rawName + " does not take a value");
-        } else {
-            argument.parse(rawName, null);
-        }
-        this.hasArguments = true;
-    }
-
-    public boolean hasValues() {
+    public boolean hasArguments() {
         return this.hasArguments;
     }
 

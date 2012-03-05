@@ -20,18 +20,18 @@ package org.widgetrefinery.util.clParser;
 /**
  * Since: 3/3/12 11:36 PM
  */
-public class StringArgumentType extends ArgumentType {
+public class StringArgumentType extends AbstractArgumentType {
     public StringArgumentType() {
         super(true);
     }
 
     @Override
-    public String getDescription() {
+    public String getGenericDescription() {
         return "a string value";
     }
 
     @Override
-    protected Object parse(final String value, final Object oldValue) {
+    public Object parse(final String value, final Object oldValue) {
         return value;
     }
 }

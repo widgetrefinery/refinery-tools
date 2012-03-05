@@ -33,15 +33,15 @@ public class Argument implements Comparable<Argument> {
     }
 
     public Argument(final String rawName, final ArgumentType type, final String description) {
-        if (null == rawName || rawName.trim().isEmpty()) {
-            throw new IllegalArgumentException("no name defined for argument");
+        if (null == rawName || rawName.trim().isEmpty() || rawName.contains("=")) {
+            throw new IllegalArgumentException("invalid argument name (" + rawName + ')');
         }
         if (null == type) {
-            throw new IllegalArgumentException("no type defined for argument " + rawName);
+            throw new IllegalArgumentException("missing argument type for " + rawName);
         }
         this.names = rawName.split("\\Q" + DELIMITER + "\\E");
         this.type = type;
-        this.description = null != description && !description.trim().isEmpty() ? description : type.getDescription();
+        this.description = null != description && !description.trim().isEmpty() ? description : type.getGenericDescription();
     }
 
     public String[] getNames() {

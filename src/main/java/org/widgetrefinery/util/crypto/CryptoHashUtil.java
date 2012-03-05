@@ -126,7 +126,7 @@ public class CryptoHashUtil {
                                                       new BooleanArgumentType(),
                                                       "Displays this help message."));
 
-        if (!clParser.hasValues() || Boolean.TRUE == clParser.getValue("help")) {
+        if (!clParser.hasArguments() || Boolean.TRUE == clParser.getValue("help")) {
             System.err.println(clParser.getHelpMessage(CryptoHashUtil.class,
                                                        "Computes various hashes against the given input data. Input data can come\nfrom filenames on the command line or stdin."));
             System.exit(0);

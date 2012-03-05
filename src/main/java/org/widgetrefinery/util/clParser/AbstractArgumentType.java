@@ -18,12 +18,17 @@
 package org.widgetrefinery.util.clParser;
 
 /**
- * Since: 3/4/12 6:33 PM
+ * Since: 3/3/12 8:46 PM
  */
-public interface ArgumentType {
-    boolean isConsumesValue();
+public abstract class AbstractArgumentType implements ArgumentType {
+    private final boolean consumesValue;
 
-    String getGenericDescription();
+    protected AbstractArgumentType(final boolean consumesValue) {
+        this.consumesValue = consumesValue;
+    }
 
-    Object parse(String value, Object oldValue);
+    @Override
+    public boolean isConsumesValue() {
+        return this.consumesValue;
+    }
 }

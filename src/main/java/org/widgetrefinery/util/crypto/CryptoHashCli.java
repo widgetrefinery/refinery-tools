@@ -20,7 +20,8 @@ package org.widgetrefinery.util.crypto;
 import org.widgetrefinery.util.StringUtil;
 import org.widgetrefinery.util.clParser.*;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,6 @@ import java.util.List;
  * Since: 3/1/12 10:49 PM
  */
 public class CryptoHashCli {
-    private static final int BUFFER_SIZE = 1024;
-
     public static void main(String[] args) throws IOException {
         CLParser clParser = new CLParser(args,
                                          new Argument("e|encoding",
@@ -37,7 +36,7 @@ public class CryptoHashCli {
                                                       "Provide a sequence of encodings to apply. Possible values are:\n\tc: crc32\n\tm: md5\n\ts: sha1"),
                                          new Argument("s|string",
                                                       new ListArgumentType(new StringArgumentType()),
-                                                      "Encodes the string supplied."),
+                                                      "Encodes the given string."),
                                          new Argument("h|help",
                                                       new BooleanArgumentType(),
                                                       "Displays this help message."));
@@ -49,151 +48,79 @@ public class CryptoHashCli {
         }
 
         List<String> encodings = clParser.getValue("encoding");
-        List<CryptoHash> cryptoHashes = buildCryptoHashes(encodings);
-        if (!cryptoHashes.isEmpty()) {
-            boolean processStdnin = true;
+        MultiCryptoHash multiCryptoHash = buildMultiCryptoHash(encodings);
+        if (null != multiCryptoHash) {
+            boolean processStdin = true;
             if (!clParser.getLeftovers().isEmpty()) {
                 for (String filename : clParser.getLeftovers()) {
-                    List<String> results = processFile(filename, cryptoHashes);
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("file: ").append(filename);
-                    for (String result : results) {
-                        sb.append(' ').append(result);
-                    }
-                    System.out.println(sb.toString());
+                    byte[][] results = multiCryptoHash.getHashes(new FileInputStream(filename));
+                    outputResults("file|" + filename, results);
                 }
-                processStdnin = false;
+                processStdin = false;
             }
             List<String> stringValues = clParser.getValue("string");
             if (null != stringValues && !stringValues.isEmpty()) {
                 for (String stringValue : stringValues) {
-                    List<String> results = processInputStream(new ByteArrayInputStream(stringValue.getBytes()), cryptoHashes);
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("data: ").append(stringValue);
-                    for (String result : results) {
-                        sb.append(' ').append(result);
-                    }
-                    System.out.println(sb.toString());
+                    byte[][] results = multiCryptoHash.getHashes(stringValue);
+                    outputResults("input|" + stringValue, results);
                 }
-                processStdnin = false;
+                processStdin = false;
             }
-            if (processStdnin) {
-                List<String> results = processInputStream(System.in, cryptoHashes);
-                for (String result : results) {
-                    System.out.println(result);
-                }
+            if (processStdin) {
+                byte[][] results = multiCryptoHash.getHashes(System.in);
+                outputResults("stdin", results);
             }
         }
     }
 
-    protected static List<CryptoHash> buildCryptoHashes(final List<String> encodings) {
-        List<CryptoHash> results = new ArrayList<CryptoHash>();
+    protected static MultiCryptoHash buildMultiCryptoHash(final List<String> encodings) {
+        List<CryptoHash> cryptoHashes = new ArrayList<CryptoHash>();
         if (null != encodings && !encodings.isEmpty()) {
             for (String encoding : encodings) {
-                if (!"".equals(encoding)) {
-                    CryptoHash cryptoHash = null;
-                    for (char encodingKey : encoding.toCharArray()) {
-                        switch (encodingKey) {
-                            case 'c':
-                                cryptoHash = new CRC32CryptoHash(cryptoHash);
-                                break;
-                            case 'm':
-                                cryptoHash = DigestCryptoHash.createMD5(cryptoHash);
-                                break;
-                            case 's':
-                                cryptoHash = DigestCryptoHash.createSHA1(cryptoHash);
-                                break;
-                            default:
-                                throw new RuntimeException("invalid encoding " + encodingKey);
-                        }
-                    }
-                    results.add(cryptoHash);
+                CryptoHash cryptoHash = buildCryptoHash(encoding);
+                if (null != cryptoHash) {
+                    cryptoHashes.add(cryptoHash);
                 }
             }
         }
-        return results;
+
+        MultiCryptoHash result = null;
+        if (!cryptoHashes.isEmpty()) {
+            CryptoHash[] args = new CryptoHash[cryptoHashes.size()];
+            cryptoHashes.toArray(args);
+            result = new MultiCryptoHash(args);
+        }
+
+        return result;
     }
 
-    protected static List<String> processFile(final String filename, final List<CryptoHash> cryptoHashes) throws IOException {
-        FileInputStream fileInputStream = new FileInputStream(filename);
-        return processInputStream(fileInputStream, cryptoHashes);
+    protected static CryptoHash buildCryptoHash(final String encoding) {
+        CryptoHash cryptoHash = null;
+        if (StringUtil.isNotBlank(encoding)) {
+            for (char encodingKey : encoding.toCharArray()) {
+                switch (encodingKey) {
+                    case 'c':
+                        cryptoHash = new CRC32CryptoHash(cryptoHash);
+                        break;
+                    case 'm':
+                        cryptoHash = DigestCryptoHash.createMD5(cryptoHash);
+                        break;
+                    case 's':
+                        cryptoHash = DigestCryptoHash.createSHA1(cryptoHash);
+                        break;
+                    default:
+                        throw new RuntimeException("invalid encoding " + encodingKey);
+                }
+            }
+        }
+        return cryptoHash;
     }
 
-    private static List<String> processInputStream(final InputStream inputStream, final List<CryptoHash> cryptoHashes) throws IOException {
-        List<PipedOutputStream> sources = new ArrayList<PipedOutputStream>(cryptoHashes.size());
-        List<CryptoThread> threads = new ArrayList<CryptoThread>(cryptoHashes.size());
-        List<String> results = new ArrayList<String>(cryptoHashes.size());
-        boolean hasError = false;
-
-        try {
-            for (CryptoHash cryptoHash : cryptoHashes) {
-                PipedOutputStream source = new PipedOutputStream();
-                sources.add(source);
-                CryptoThread thread = new CryptoThread(cryptoHash, source);
-                threads.add(thread);
-                thread.start();
-            }
-            byte[] buffer = new byte[BUFFER_SIZE];
-            for (int bytesRead = inputStream.read(buffer); 0 < bytesRead; bytesRead = inputStream.read(buffer)) {
-                for (PipedOutputStream source : sources) {
-                    source.write(buffer, 0, bytesRead);
-                }
-            }
-            for (PipedOutputStream source : sources) {
-                source.flush();
-                source.close();
-            }
-            Thread.yield();
-        } finally {
-            for (CryptoThread thread : threads) {
-                try {
-                    thread.join(1000);
-                } catch (InterruptedException e) {
-                    thread.stop();
-                }
-                if (null != thread.getError()) {
-                    thread.getError().printStackTrace(System.err);
-                    hasError = true;
-                } else {
-                    results.add(thread.getResult());
-                }
-            }
+    protected static void outputResults(final String prefix, final byte[][] results) {
+        StringBuilder sb = new StringBuilder(prefix).append(':');
+        for (byte[] result : results) {
+            sb.append(' ').append(StringUtil.toHexString(result));
         }
-
-        if (hasError) {
-            throw new RuntimeException("unexpected error processing data");
-        }
-
-        return results;
-    }
-
-    protected static class CryptoThread extends Thread {
-        private final CryptoHash       cryptoHash;
-        private final PipedInputStream inputStream;
-        private       String           result;
-        private       Exception        error;
-
-        public CryptoThread(final CryptoHash cryptoHash, final PipedOutputStream source) throws IOException {
-            this.cryptoHash = cryptoHash;
-            this.inputStream = new PipedInputStream(source);
-        }
-
-        @Override
-        public void run() {
-            try {
-                byte[] result = this.cryptoHash.getHash(this.inputStream);
-                this.result = StringUtil.toHexString(result);
-            } catch (Exception e) {
-                this.error = e;
-            }
-        }
-
-        public String getResult() {
-            return this.result;
-        }
-
-        public Exception getError() {
-            return this.error;
-        }
+        System.out.println(sb.toString());
     }
 }

@@ -17,7 +17,6 @@
 
 package org.widgetrefinery.util.crypto;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -51,12 +50,14 @@ public abstract class AbstractCryptoHash implements CryptoHash {
 
     @Override
     public byte[] getHash(final String input) {
-        try {
-            InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-            return getHash(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException("unexpected io error reading from byte array", e);
+        byte[] result;
+        if (null != this.chain) {
+            result = this.chain.getHash(input);
+            result = computeHash(result);
+        } else {
+            result = computeHash(input.getBytes());
         }
+        return result;
     }
 
     protected abstract byte[] computeHash(final InputStream input) throws IOException;

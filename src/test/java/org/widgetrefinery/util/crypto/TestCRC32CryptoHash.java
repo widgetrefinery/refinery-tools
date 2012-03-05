@@ -29,14 +29,38 @@ import java.io.InputStream;
  * Since: 3/4/12 7:56 PM
  */
 public class TestCRC32CryptoHash extends TestCase {
-    public void testGetHash() throws Exception {
+    public void testInputStreamHash() throws Exception {
+        CryptoHash cryptoHash = new CRC32CryptoHash();
+        InputStream input = new ByteArrayInputStream("foobar".getBytes());
+        byte[] result = cryptoHash.getHash(input);
+        assertEquals("9ef61f95", StringUtil.toHexString(result));
+    }
+
+    public void testStringHash() throws Exception {
         CryptoHash cryptoHash = new CRC32CryptoHash();
         byte[] result = cryptoHash.getHash("foobar");
         assertEquals("9ef61f95", StringUtil.toHexString(result));
     }
 
-    public void testChainedGetHash() throws Exception {
+    public void testChainedInputStreamHash() throws Exception {
         final InputStream input = new ByteArrayInputStream("hello world".getBytes());
+
+        Mockery context = new Mockery();
+        final CryptoHash mockedCryptoHash = context.mock(CryptoHash.class);
+        context.checking(new Expectations() {{
+            oneOf(mockedCryptoHash).getHash(input);
+            will(returnValue("foobar".getBytes()));
+        }});
+
+        CryptoHash cryptoHash = new CRC32CryptoHash(mockedCryptoHash);
+        byte[] result = cryptoHash.getHash(input);
+        assertEquals("9ef61f95", StringUtil.toHexString(result));
+
+        context.assertIsSatisfied();
+    }
+
+    public void testChainedStringHash() throws Exception {
+        final String input = "hello world";
 
         Mockery context = new Mockery();
         final CryptoHash mockedCryptoHash = context.mock(CryptoHash.class);

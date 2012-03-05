@@ -17,12 +17,22 @@
 
 package org.widgetrefinery.util.clParser;
 
+import java.util.regex.Pattern;
+
 /**
  * Since: 3/3/12 11:36 PM
  */
 public class StringArgumentType extends AbstractArgumentType {
+    private final Pattern expectedPattern;
+
     public StringArgumentType() {
         super(true);
+        this.expectedPattern = null;
+    }
+
+    public StringArgumentType(final String expectedPattern) {
+        super(true);
+        this.expectedPattern = Pattern.compile(expectedPattern);
     }
 
     @Override
@@ -32,6 +42,9 @@ public class StringArgumentType extends AbstractArgumentType {
 
     @Override
     public Object parse(final String value, final Object oldValue) {
+        if (null != this.expectedPattern && !this.expectedPattern.matcher(value).matches()) {
+            throw new RuntimeException("invalid value (" + value + ')');
+        }
         return value.trim();
     }
 }

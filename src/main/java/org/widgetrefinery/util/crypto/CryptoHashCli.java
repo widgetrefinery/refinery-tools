@@ -32,7 +32,7 @@ public class CryptoHashCli {
     public static void main(String[] args) throws IOException {
         CLParser clParser = new CLParser(args,
                                          new Argument("e|encoding",
-                                                      new ListArgumentType(new StringArgumentType()),
+                                                      new ListArgumentType(new StringArgumentType("[cms]+")),
                                                       "Provide a sequence of encodings to apply. Possible values are:\n\tc: crc32\n\tm: md5\n\ts: sha1"),
                                          new Argument("s|string",
                                                       new ListArgumentType(new StringArgumentType()),

@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Since: 3/1/12 10:49 PM
  */
-public class CryptoHashUtil {
+public class CryptoHashCli {
     private static final int BUFFER_SIZE = 1024;
 
     public static void main(String[] args) throws IOException {
@@ -39,7 +39,7 @@ public class CryptoHashUtil {
                                                       "Displays this help message."));
 
         if (!clParser.hasArguments() || Boolean.TRUE == clParser.getValue("help")) {
-            System.err.println(clParser.getHelpMessage(CryptoHashUtil.class,
+            System.err.println(clParser.getHelpMessage(CryptoHashCli.class,
                                                        "Computes various hashes against the given input data. Input data can come\nfrom filenames on the command line or stdin."));
             System.exit(0);
         }

@@ -17,6 +17,8 @@
 
 package org.widgetrefinery.util.clParser;
 
+import org.widgetrefinery.util.StringUtil;
+
 /**
  * Since: 3/3/12 8:53 PM
  */
@@ -33,7 +35,7 @@ public class Argument implements Comparable<Argument> {
     }
 
     public Argument(final String rawName, final ArgumentType type, final String description) {
-        if (null == rawName || rawName.trim().isEmpty() || rawName.contains("=")) {
+        if (StringUtil.isBlank(rawName) || rawName.contains("=")) {
             throw new IllegalArgumentException("invalid argument name (" + rawName + ')');
         }
         if (null == type) {
@@ -41,7 +43,7 @@ public class Argument implements Comparable<Argument> {
         }
         this.names = rawName.trim().split("\\Q" + DELIMITER + "\\E");
         this.type = type;
-        this.description = null != description && !description.trim().isEmpty() ? description.trim() : type.getGenericDescription();
+        this.description = StringUtil.isNotBlank(description) ? description.trim() : type.getGenericDescription();
     }
 
     public String[] getNames() {

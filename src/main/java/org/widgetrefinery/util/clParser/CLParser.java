@@ -17,6 +17,8 @@
 
 package org.widgetrefinery.util.clParser;
 
+import org.widgetrefinery.util.StringUtil;
+
 import java.util.*;
 
 /**
@@ -121,7 +123,7 @@ public class CLParser {
 
         sb.append("USAGE:\n  java ").append(mainClass.getName()).append(" [options] ...\n");
 
-        if (null != description && !description.trim().isEmpty()) {
+        if (StringUtil.isNotBlank(description)) {
             String formattedDescription = description.trim().replaceAll("\n", "\n  ").replaceAll("\t", "    ");
             sb.append("\nDESCRIPTION:\n  ").append(formattedDescription).append("\n");
         }

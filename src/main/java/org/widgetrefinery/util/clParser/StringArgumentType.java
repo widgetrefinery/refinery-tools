@@ -17,6 +17,8 @@
 
 package org.widgetrefinery.util.clParser;
 
+import org.widgetrefinery.util.StringUtil;
+
 import java.util.regex.Pattern;
 
 /**
@@ -45,6 +47,6 @@ public class StringArgumentType extends AbstractArgumentType {
         if (null != this.expectedPattern && !this.expectedPattern.matcher(value).matches()) {
             throw new RuntimeException("invalid value (" + value + ')');
         }
-        return value.trim();
+        return StringUtil.trimToEmpty(value);
     }
 }

@@ -32,7 +32,7 @@ public class TestCRC32CryptoHash extends TestCase {
     public void testGetHash() throws Exception {
         CryptoHash cryptoHash = new CRC32CryptoHash();
         byte[] result = cryptoHash.getHash("foobar");
-        assertEquals("9ef61f95", StringUtil.toString(result));
+        assertEquals("9ef61f95", StringUtil.toHexString(result));
     }
 
     public void testChainedGetHash() throws Exception {
@@ -47,7 +47,7 @@ public class TestCRC32CryptoHash extends TestCase {
 
         CryptoHash cryptoHash = new CRC32CryptoHash(mockedCryptoHash);
         byte[] result = cryptoHash.getHash(input);
-        assertEquals("9ef61f95", StringUtil.toString(result));
+        assertEquals("9ef61f95", StringUtil.toHexString(result));
 
         context.assertIsSatisfied();
     }

@@ -32,7 +32,7 @@ public class TestDigestCryptoHash extends TestCase {
     public void testMd5GetHash() throws Exception {
         CryptoHash cryptoHash = DigestCryptoHash.createMD5();
         byte[] result = cryptoHash.getHash("foobar");
-        assertEquals("3858f62230ac3c915f300c664312c63f", StringUtil.toString(result));
+        assertEquals("3858f62230ac3c915f300c664312c63f", StringUtil.toHexString(result));
     }
 
     public void testChainedMd5GetHash() throws Exception {
@@ -47,7 +47,7 @@ public class TestDigestCryptoHash extends TestCase {
 
         CryptoHash cryptoHash = DigestCryptoHash.createMD5(mockedCryptoHash);
         byte[] result = cryptoHash.getHash(input);
-        assertEquals("3858f62230ac3c915f300c664312c63f", StringUtil.toString(result));
+        assertEquals("3858f62230ac3c915f300c664312c63f", StringUtil.toHexString(result));
 
         context.assertIsSatisfied();
     }
@@ -55,7 +55,7 @@ public class TestDigestCryptoHash extends TestCase {
     public void testSha1GetHash() throws Exception {
         CryptoHash cryptoHash = DigestCryptoHash.createSHA1();
         byte[] result = cryptoHash.getHash("foobar");
-        assertEquals("8843d7f92416211de9ebb963ff4ce28125932878", StringUtil.toString(result));
+        assertEquals("8843d7f92416211de9ebb963ff4ce28125932878", StringUtil.toHexString(result));
     }
 
     public void testChainedSha1GetHash() throws Exception {
@@ -70,7 +70,7 @@ public class TestDigestCryptoHash extends TestCase {
 
         CryptoHash cryptoHash = DigestCryptoHash.createSHA1(mockedCryptoHash);
         byte[] result = cryptoHash.getHash(input);
-        assertEquals("8843d7f92416211de9ebb963ff4ce28125932878", StringUtil.toString(result));
+        assertEquals("8843d7f92416211de9ebb963ff4ce28125932878", StringUtil.toHexString(result));
 
         context.assertIsSatisfied();
     }

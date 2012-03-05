@@ -33,7 +33,7 @@ public class StringUtil {
         return null != value ? value.trim() : "";
     }
 
-    public static String toString(final byte[] input) {
+    public static String toHexString(final byte[] input) {
         StringBuilder sb = new StringBuilder();
         for (byte value : input) {
             String hex = Integer.toHexString(0xFF & (int) value);

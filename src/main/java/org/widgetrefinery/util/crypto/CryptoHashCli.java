@@ -182,7 +182,7 @@ public class CryptoHashCli {
         public void run() {
             try {
                 byte[] result = this.cryptoHash.getHash(this.inputStream);
-                this.result = StringUtil.toString(result);
+                this.result = StringUtil.toHexString(result);
             } catch (Exception e) {
                 this.error = e;
             }

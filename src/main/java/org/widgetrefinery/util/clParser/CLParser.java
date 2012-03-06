@@ -118,10 +118,18 @@ public class CLParser {
         return this.leftovers;
     }
 
-    public String getHelpMessage(final Class mainClass, final String description) {
+    public String getHelpMessage(final Class mainClass, final String[] additionalArguments, final String description) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("USAGE:\n  java ").append(mainClass.getName()).append(" [options] ...\n");
+        sb.append("USAGE:\n  java ").append(mainClass.getName()).append(" [options]");
+        if (null != additionalArguments) {
+            for (String additionalArgument : additionalArguments) {
+                if (StringUtil.isNotBlank(additionalArgument)) {
+                    sb.append(' ').append(additionalArgument.trim());
+                }
+            }
+        }
+        sb.append("\n");
 
         if (StringUtil.isNotBlank(description)) {
             String formattedDescription = description.trim().replaceAll("\n", "\n  ").replaceAll("\t", "    ");

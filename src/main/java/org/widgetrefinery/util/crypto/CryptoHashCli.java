@@ -43,6 +43,7 @@ public class CryptoHashCli {
 
         if (!clParser.hasArguments() || Boolean.TRUE == clParser.getValue("help")) {
             System.err.println(clParser.getHelpMessage(CryptoHashCli.class,
+                                                       new String[]{"[input filename]", "[input filename]", "..."},
                                                        "Computes various hashes against the given input data. Input data can come\nfrom filenames on the command line or stdin."));
             System.exit(0);
         }

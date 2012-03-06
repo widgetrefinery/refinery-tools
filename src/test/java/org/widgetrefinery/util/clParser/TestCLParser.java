@@ -129,7 +129,7 @@ public class TestCLParser extends TestCase {
                                          new Argument("f|foo|foobar", new BooleanArgumentType()));
 
         String expectedUsage = "USAGE:\n" +
-                               "  java java.lang.String [options] ...\n";
+                               "  java java.lang.String [options]";
         String expectedDescription = "";
         String expectedOptions = "\nOPTIONS:\n" +
                                  "  -f\n" +
@@ -141,14 +141,21 @@ public class TestCLParser extends TestCase {
                                  "    custom\n" +
                                  "    argument\n" +
                                  "        description\n";
-        String msg = clParser.getHelpMessage(String.class, null);
-        assertEquals(expectedUsage + expectedDescription + expectedOptions, msg);
+        String msg = clParser.getHelpMessage(String.class, null, null);
+        assertEquals(expectedUsage + "\n" + expectedDescription + expectedOptions, msg);
+
+        String[] args = new String[]{"foo", " ", "bar", null};
+        msg = clParser.getHelpMessage(String.class, args, null);
+        assertEquals(expectedUsage + " foo bar\n" + expectedDescription + expectedOptions, msg);
 
         expectedDescription = "\nDESCRIPTION:\n" +
                               "  custom\n" +
                               "  application\n" +
                               "      description\n";
-        msg = clParser.getHelpMessage(String.class, "custom\napplication\n\tdescription");
-        assertEquals(expectedUsage + expectedDescription + expectedOptions, msg);
+        msg = clParser.getHelpMessage(String.class, null, "custom\napplication\n\tdescription");
+        assertEquals(expectedUsage + "\n" + expectedDescription + expectedOptions, msg);
+
+        msg = clParser.getHelpMessage(String.class, args, "custom\napplication\n\tdescription");
+        assertEquals(expectedUsage + " foo bar\n" + expectedDescription + expectedOptions, msg);
     }
 }

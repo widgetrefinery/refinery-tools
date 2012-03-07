@@ -17,6 +17,8 @@
 
 package org.widgetrefinery.util.clParser;
 
+import org.widgetrefinery.util.BadUserInputException;
+
 /**
  * Since: 3/4/12 6:33 PM
  */
@@ -25,5 +27,5 @@ public interface ArgumentType {
 
     String getGenericDescription();
 
-    Object parse(String value, Object oldValue);
+    Object parse(String value, Object oldValue) throws BadUserInputException;
 }

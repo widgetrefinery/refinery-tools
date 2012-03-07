@@ -17,6 +17,7 @@
 
 package org.widgetrefinery.util.clParser;
 
+import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
 
 import java.util.regex.Pattern;
@@ -43,9 +44,9 @@ public class StringArgumentType extends AbstractArgumentType {
     }
 
     @Override
-    public Object parse(final String value, final Object oldValue) {
+    public Object parse(final String value, final Object oldValue) throws BadUserInputException {
         if (null != this.expectedPattern && !this.expectedPattern.matcher(value).matches()) {
-            throw new RuntimeException("invalid value (" + value + ')');
+            throw new BadUserInputException("invalid value", value);
         }
         return StringUtil.trimToEmpty(value);
     }

@@ -17,6 +17,7 @@
 
 package org.widgetrefinery.util.clParser;
 
+import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
 
 import java.util.*;
@@ -29,7 +30,7 @@ public class CLParser {
     private final List<String>          leftovers;
     private       boolean               hasArguments;
 
-    public CLParser(final String[] inputs, final Argument... definitions) {
+    public CLParser(final String[] inputs, final Argument... definitions) throws IllegalArgumentException, BadUserInputException {
         this.arguments = new HashMap<String, Argument>();
         for (Argument definition : definitions) {
             for (String name : definition.getNames()) {
@@ -61,39 +62,39 @@ public class CLParser {
         }
     }
 
-    protected void parseLongArgument(final String longArgument) {
+    protected void parseLongArgument(final String longArgument) throws BadUserInputException {
         String[] keyValuePair = longArgument.split("=", 2);
         String rawName = keyValuePair[0];
         String name = rawName.substring(2);
         Argument argument = this.arguments.get(name);
         if (null == argument) {
-            throw new RuntimeException("invalid argument (" + rawName + ')');
+            throw new BadUserInputException("invalid argument", rawName);
         } else if (argument.isConsumesValue()) {
             if (2 == keyValuePair.length) {
                 String value = keyValuePair[1];
                 argument.parse(rawName, value);
             } else {
-                throw new RuntimeException("missing value for argument " + rawName);
+                throw new BadUserInputException("missing value for argument " + rawName);
             }
         } else if (2 == keyValuePair.length) {
-            throw new RuntimeException("unexpected value for argument " + rawName + " (" + keyValuePair[1] + ')');
+            throw new BadUserInputException("unexpected value for argument " + rawName, keyValuePair[1]);
         } else {
             argument.parse(rawName, "");
         }
         this.hasArguments = true;
     }
 
-    protected void parseShortArgument(final String name, final Iterator<String> itr) {
+    protected void parseShortArgument(final String name, final Iterator<String> itr) throws BadUserInputException {
         String rawName = "-" + name;
         Argument argument = this.arguments.get(name);
         if (null == argument) {
-            throw new RuntimeException("invalid argument (" + rawName + ')');
+            throw new BadUserInputException("invalid argument", rawName);
         } else if (argument.isConsumesValue()) {
             if (itr.hasNext()) {
                 String value = itr.next();
                 argument.parse(rawName, value);
             } else {
-                throw new RuntimeException("missing value for argument " + rawName);
+                throw new BadUserInputException("missing value for argument " + rawName);
             }
         } else {
             argument.parse(rawName, null);
@@ -106,7 +107,7 @@ public class CLParser {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getValue(final String rawName) {
+    public <T> T getValue(final String rawName) throws IllegalArgumentException {
         Argument argument = this.arguments.get(rawName);
         if (null == argument) {
             throw new IllegalArgumentException("no such argument (" + rawName + ')');

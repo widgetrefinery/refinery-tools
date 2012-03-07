@@ -17,6 +17,8 @@
 
 package org.widgetrefinery.util.clParser;
 
+import org.widgetrefinery.util.BadUserInputException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class ListArgumentType extends AbstractArgumentType {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object parse(final String value, final Object oldValue) {
+    public Object parse(final String value, final Object oldValue) throws BadUserInputException {
         Object parsedValue = this.listContentType.parse(value, null);
 
         List values;

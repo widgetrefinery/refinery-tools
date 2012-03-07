@@ -17,6 +17,7 @@
 
 package org.widgetrefinery.util.crypto;
 
+import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
 import org.widgetrefinery.util.clParser.*;
 
@@ -30,6 +31,16 @@ import java.util.List;
  */
 public class CryptoHashCli {
     public static void main(String[] args) throws IOException {
+        try {
+            CryptoHashCli cli = new CryptoHashCli();
+            cli.processCommandLine(args);
+        } catch (BadUserInputException e) {
+            System.err.println(e.getMessage());
+            System.exit(-1);
+        }
+    }
+
+    protected void processCommandLine(final String[] args) throws IllegalArgumentException, IOException, BadUserInputException {
         CLParser clParser = new CLParser(args,
                                          new Argument("e|encoding",
                                                       new ListArgumentType(new StringArgumentType("[cms]+")),
@@ -74,7 +85,7 @@ public class CryptoHashCli {
         }
     }
 
-    protected static MultiCryptoHash buildMultiCryptoHash(final List<String> encodings) {
+    protected MultiCryptoHash buildMultiCryptoHash(final List<String> encodings) throws BadUserInputException {
         List<CryptoHash> cryptoHashes = new ArrayList<CryptoHash>();
         if (null != encodings && !encodings.isEmpty()) {
             for (String encoding : encodings) {
@@ -91,11 +102,10 @@ public class CryptoHashCli {
             cryptoHashes.toArray(args);
             result = new MultiCryptoHash(args);
         }
-
         return result;
     }
 
-    protected static CryptoHash buildCryptoHash(final String encoding) {
+    protected CryptoHash buildCryptoHash(final String encoding) throws BadUserInputException {
         CryptoHash cryptoHash = null;
         if (StringUtil.isNotBlank(encoding)) {
             for (char encodingKey : encoding.toCharArray()) {
@@ -110,14 +120,14 @@ public class CryptoHashCli {
                         cryptoHash = DigestCryptoHash.createSHA1(cryptoHash);
                         break;
                     default:
-                        throw new RuntimeException("invalid encoding " + encodingKey);
+                        throw new BadUserInputException("invalid encoding", encodingKey);
                 }
             }
         }
         return cryptoHash;
     }
 
-    protected static void outputResults(final String prefix, final byte[][] results) {
+    protected void outputResults(final String prefix, final byte[][] results) {
         StringBuilder sb = new StringBuilder(prefix).append(':');
         for (byte[] result : results) {
             sb.append(' ').append(StringUtil.toHexString(result));

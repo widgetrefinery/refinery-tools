@@ -17,6 +17,7 @@
 
 package org.widgetrefinery.util.clParser;
 
+import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
 
 /**
@@ -30,11 +31,11 @@ public class Argument implements Comparable<Argument> {
     private final String       description;
     private       Object       value;
 
-    public Argument(final String rawName, final ArgumentType type) {
+    public Argument(final String rawName, final ArgumentType type) throws IllegalArgumentException {
         this(rawName, type, null);
     }
 
-    public Argument(final String rawName, final ArgumentType type, final String description) {
+    public Argument(final String rawName, final ArgumentType type, final String description) throws IllegalArgumentException {
         if (StringUtil.isBlank(rawName) || rawName.contains("=")) {
             throw new IllegalArgumentException("invalid argument name (" + rawName + ')');
         }
@@ -58,11 +59,11 @@ public class Argument implements Comparable<Argument> {
         return this.type.isConsumesValue();
     }
 
-    public void parse(final String argument, final String rawValue) {
+    public void parse(final String argument, final String rawValue) throws BadUserInputException {
         try {
             this.value = this.type.parse(rawValue, this.value);
-        } catch (Exception e) {
-            throw new RuntimeException("invalid value for " + argument + " (" + rawValue + ')', e);
+        } catch (BadUserInputException e) {
+            throw new BadUserInputException("invalid value for " + argument, e);
         }
     }
 

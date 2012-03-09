@@ -17,6 +17,9 @@
 
 package org.widgetrefinery.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Since: 3/4/12 10:17 PM
  */
@@ -42,6 +45,60 @@ public class StringUtil {
             }
             sb.append(hex);
         }
+        return sb.toString();
+    }
+
+    public static String wordWrap(final String value, final int width, final String prefix, final String tabPrefix) throws IllegalArgumentException {
+        if (prefix.length() >= width) {
+            throw new IllegalArgumentException("newline prefix is longer than the requested wrapping width");
+        }
+        if (prefix.length() + tabPrefix.length() >= width) {
+            throw new IllegalArgumentException("newline prefix + tab prefix is longer than the requested wrapping width");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Pattern p = Pattern.compile(" +|[\n\t]");
+        Matcher m = p.matcher(value);
+        int startNdx = 0;
+        int curLineWidth = 0;
+        StringBuilder whitespace = new StringBuilder(prefix);
+
+        while (m.find()) {
+            int length = m.start() - startNdx;
+            if (0 < length) {
+                String word = value.substring(startNdx, m.start());
+                if (curLineWidth + whitespace.length() + length <= width) {
+                    sb.append(whitespace);
+                    curLineWidth += whitespace.length();
+                } else {
+                    sb.append('\n').append(prefix);
+                    curLineWidth = prefix.length();
+                }
+                sb.append(word);
+                curLineWidth += length;
+                whitespace = new StringBuilder();
+            }
+            startNdx = m.end();
+
+            String matched = m.group();
+            if ("\n".equals(matched)) {
+                sb.append('\n').append(prefix);
+                curLineWidth = prefix.length();
+                whitespace = new StringBuilder();
+            } else if ("\t".equals(matched)) {
+                whitespace.append(tabPrefix);
+            } else {
+                whitespace.append(matched);
+            }
+        }
+        String remaining = value.substring(startNdx);
+        if (curLineWidth + whitespace.length() + remaining.length() <= width) {
+            sb.append(whitespace);
+        } else {
+            sb.append('\n').append(prefix);
+        }
+        sb.append(remaining);
+
         return sb.toString();
     }
 }

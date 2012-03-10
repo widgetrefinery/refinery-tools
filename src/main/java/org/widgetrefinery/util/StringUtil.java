@@ -48,6 +48,10 @@ public class StringUtil {
         return sb.toString();
     }
 
+    public static String wordWrap(final String value, final int width) throws IllegalArgumentException {
+        return wordWrap(value, width, "", "");
+    }
+
     public static String wordWrap(final String value, final int width, final String prefix, final String tabPrefix) throws IllegalArgumentException {
         if (prefix.length() >= width) {
             throw new IllegalArgumentException("newline prefix is longer than the requested wrapping width");

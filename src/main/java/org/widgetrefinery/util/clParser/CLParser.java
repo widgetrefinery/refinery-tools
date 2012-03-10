@@ -21,6 +21,9 @@ import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -171,6 +174,25 @@ public class CLParser {
         }
 
         return sb.toString();
+    }
+
+    public void displayLicense(final OutputStream outputStream) throws IOException {
+        InputStream input = getClass().getClassLoader().getResourceAsStream("COPYING");
+        if (null != input) {
+            try {
+                byte[] buffer = new byte[1024];
+                for (int bytesRead = input.read(buffer); 0 < bytesRead; bytesRead = input.read(buffer)) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+                outputStream.flush();
+            } finally {
+                input.close();
+            }
+        } else {
+            byte[] msg = StringUtil.wordWrap("License file not found. This should have displayed the GPLv3 license.", 80).getBytes();
+            outputStream.write(msg);
+            outputStream.flush();
+        }
     }
 
     public File getJarFile(final Class mainClass) throws URISyntaxException {

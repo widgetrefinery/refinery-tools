@@ -54,12 +54,19 @@ public class Cli {
                                                       "Encodes the given string."),
                                          new Argument("h|help",
                                                       new BooleanArgumentType(),
-                                                      "Displays this help message."));
+                                                      "Displays this help message."),
+                                         new Argument("l|license",
+                                                      new BooleanArgumentType(),
+                                                      "Displays the GPLv3 license that this software is released under."));
 
         if (!clParser.hasArguments() || Boolean.TRUE == clParser.getValue("help")) {
             System.err.println(clParser.getHelpMessage(Cli.class,
                                                        new String[]{"[input filename]", "[input filename]", "..."},
                                                        "Computes various hashes against the given input data. Input data can come from filenames on the command line or stdin."));
+            System.exit(0);
+        }
+        if (Boolean.TRUE == clParser.getValue("license")) {
+            clParser.displayLicense(System.out);
             System.exit(0);
         }
 

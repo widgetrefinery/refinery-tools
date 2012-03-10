@@ -21,7 +21,7 @@
                         <archive>
                             <addMavenDescriptor>false</addMavenDescriptor>
                             <manifest>
-                                <mainClass>org.widgetrefinery.util.crypto.CryptoHashCli</mainClass>
+                                <mainClass>org.widgetrefinery.util.crypto.Cli</mainClass>
                             </manifest>
                         </archive>
                     </configuration>

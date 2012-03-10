@@ -20,6 +20,9 @@ package org.widgetrefinery.util.clParser;
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 /**
@@ -122,7 +125,15 @@ public class CLParser {
     public String getHelpMessage(final Class mainClass, final String[] additionalArguments, final String description) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("USAGE:\n  java ").append(mainClass.getName()).append(" [options]");
+        String command;
+        try {
+            File mainFile = getJarFile(mainClass);
+            command = "java -jar " + mainFile.getName();
+        } catch (Exception e) {
+            command = "java " + mainClass.getName();
+        }
+
+        sb.append("USAGE:\n  ").append(command).append(" [options]");
         if (null != additionalArguments) {
             for (String additionalArgument : additionalArguments) {
                 if (StringUtil.isNotBlank(additionalArgument)) {
@@ -133,8 +144,8 @@ public class CLParser {
         sb.append("\n");
 
         if (StringUtil.isNotBlank(description)) {
-            String formattedDescription = description.trim().replaceAll("\n", "\n  ").replaceAll("\t", "    ");
-            sb.append("\nDESCRIPTION:\n  ").append(formattedDescription).append("\n");
+            String formattedDescription = StringUtil.wordWrap(description.trim(), 80, "  ", "    ");
+            sb.append("\nDESCRIPTION:\n").append(formattedDescription).append("\n");
         }
 
         sb.append("\nOPTIONS:\n");
@@ -155,10 +166,15 @@ public class CLParser {
                 }
                 sb.append("\n");
             }
-            String argumentDescription = argument.getDescription().replaceAll("\n", "\n    ").replaceAll("\t", "    ");
-            sb.append("    ").append(argumentDescription).append("\n");
+            String argumentDescription = StringUtil.wordWrap(argument.getDescription().trim(), 80, "    ", "    ");
+            sb.append(argumentDescription).append("\n");
         }
 
         return sb.toString();
+    }
+
+    public File getJarFile(final Class mainClass) throws URISyntaxException {
+        URI mainURI = mainClass.getProtectionDomain().getCodeSource().getLocation().toURI();
+        return new File(mainURI);
     }
 }

@@ -29,13 +29,17 @@ import java.util.List;
 /**
  * Since: 3/1/12 10:49 PM
  */
-public class CryptoHashCli {
+public class Cli {
     public static void main(String[] args) throws IOException {
         try {
-            CryptoHashCli cli = new CryptoHashCli();
+            Cli cli = new Cli();
             cli.processCommandLine(args);
-        } catch (BadUserInputException e) {
-            System.err.println(e.getMessage());
+        } catch (Exception e) {
+            if (null == System.getProperty("debug")) {
+                System.err.println(e.getMessage());
+            } else {
+                e.printStackTrace(System.err);
+            }
             System.exit(-1);
         }
     }
@@ -53,9 +57,9 @@ public class CryptoHashCli {
                                                       "Displays this help message."));
 
         if (!clParser.hasArguments() || Boolean.TRUE == clParser.getValue("help")) {
-            System.err.println(clParser.getHelpMessage(CryptoHashCli.class,
+            System.err.println(clParser.getHelpMessage(Cli.class,
                                                        new String[]{"[input filename]", "[input filename]", "..."},
-                                                       "Computes various hashes against the given input data. Input data can come\nfrom filenames on the command line or stdin."));
+                                                       "Computes various hashes against the given input data. Input data can come from filenames on the command line or stdin."));
             System.exit(0);
         }
 

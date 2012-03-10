@@ -44,6 +44,7 @@
                     <configuration>
                         <finalName>${project.artifactId}</finalName>
                         <appendAssemblyId>false</appendAssemblyId>
+                        <attach>false</attach>
                     </configuration>
                 </plugin>
             </plugins>

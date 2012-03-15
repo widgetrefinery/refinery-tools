@@ -20,16 +20,6 @@ package org.widgetrefinery.util.event;
 /**
  * Since: 3/14/12 9:46 PM
  */
-public abstract class EventListener<E extends Event> {
-    private final Class<E> eventClass;
-
-    protected EventListener(final Class<E> eventClass) {
-        this.eventClass = eventClass;
-    }
-
-    public boolean isInterested(final Event event) {
-        return this.eventClass.isInstance(event);
-    }
-
-    public abstract void notify(final E event);
+public interface EventListener<E extends Event> {
+    void notify(E event);
 }

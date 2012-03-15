@@ -21,11 +21,37 @@ import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Since: 3/14/12 9:58 PM
  */
 public class TestEventBus extends TestCase {
+    private Handler handler;
+    private Level   oldLogLevel;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        this.handler = new ConsoleHandler();
+        this.handler.setLevel(Level.FINEST);
+        Logger logger = Logger.getLogger("");
+        logger.addHandler(this.handler);
+        this.oldLogLevel = logger.getLevel();
+        logger.setLevel(Level.FINEST);
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        Logger logger = Logger.getLogger("");
+        logger.removeHandler(this.handler);
+        logger.setLevel(this.oldLogLevel);
+        super.tearDown();
+    }
+
     public void testEventBus() {
         //setup the event bus
         EventBus bus = new EventBus();
@@ -42,7 +68,7 @@ public class TestEventBus extends TestCase {
         assertEquals(0, listener2.values.size());
         assertEquals(1, listener3.values.size());
         assertEquals(Integer.valueOf(10), listener1.values.get(0));
-        assertEquals(10, listener3.values.get(0));
+        assertEquals(Integer.valueOf(10), ((StubEvent1) listener3.values.get(0)).payload);
         listener1.values.clear();
         listener3.values.clear();
 
@@ -52,7 +78,7 @@ public class TestEventBus extends TestCase {
         assertEquals(1, listener2.values.size());
         assertEquals(1, listener3.values.size());
         assertEquals(Integer.valueOf(20), listener2.values.get(0));
-        assertEquals(20, listener3.values.get(0));
+        assertEquals(Integer.valueOf(20), ((StubEvent2) listener3.values.get(0)).payload);
         listener2.values.clear();
         listener3.values.clear();
 
@@ -65,57 +91,58 @@ public class TestEventBus extends TestCase {
         assertEquals(Integer.valueOf(11), listener1.values.get(0));
     }
 
-    protected static class StubEvent1 extends Event<Integer> {
+    protected static class StubEvent1 implements Event {
+        private final Integer payload;
+
         public StubEvent1(final Integer payload) {
-            super(payload);
+            this.payload = payload;
         }
     }
 
-    protected static class StubEvent2 extends Event<Integer> {
+    protected static class StubEvent2 implements Event {
+        private final Integer payload;
+
         public StubEvent2(final Integer payload) {
-            super(payload);
+            this.payload = payload;
         }
     }
 
-    protected static class StubEventListener1 extends EventListener<StubEvent1> {
+    protected static class StubEventListener1 implements EventListener<StubEvent1> {
         private final List<Integer> values;
 
         public StubEventListener1() {
-            super(StubEvent1.class);
             this.values = new ArrayList<Integer>();
         }
 
         @Override
         public void notify(final StubEvent1 event) {
-            this.values.add(event.getPayload());
+            this.values.add(event.payload);
         }
     }
 
-    protected static class StubEventListener2 extends EventListener<StubEvent2> {
+    protected static class StubEventListener2 implements EventListener<StubEvent2> {
         private final List<Integer> values;
 
         public StubEventListener2() {
-            super(StubEvent2.class);
             this.values = new ArrayList<Integer>();
         }
 
         @Override
         public void notify(final StubEvent2 event) {
-            this.values.add(event.getPayload());
+            this.values.add(event.payload);
         }
     }
 
-    protected static class StubEventListener3 extends EventListener<Event> {
-        private final List<Object> values;
+    protected static class StubEventListener3 implements EventListener {
+        private final List<Event> values;
 
         public StubEventListener3() {
-            super(Event.class);
-            this.values = new ArrayList<Object>();
+            this.values = new ArrayList<Event>();
         }
 
         @Override
         public void notify(final Event event) {
-            this.values.add(event.getPayload());
+            this.values.add(event);
         }
     }
 }

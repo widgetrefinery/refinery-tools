@@ -20,14 +20,5 @@ package org.widgetrefinery.util.event;
 /**
  * Since: 3/14/12 9:49 PM
  */
-public class Event<V> {
-    private final V payload;
-
-    public Event(final V payload) {
-        this.payload = payload;
-    }
-
-    public V getPayload() {
-        return this.payload;
-    }
+public interface Event {
 }

@@ -17,13 +17,19 @@
 
 package org.widgetrefinery.util.event;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Since: 3/14/12 9:46 PM
  */
 public class EventBus {
+    private static final Logger logger = Logger.getLogger(EventBus.class.getName());
+
     private final Set<EventListener> listeners;
 
     public EventBus() {
@@ -41,8 +47,15 @@ public class EventBus {
     @SuppressWarnings("unchecked")
     public void fireEvent(final Event event) {
         for (EventListener listener : this.listeners) {
-            if (listener.isInterested(event)) {
+            try {
                 listener.notify(event);
+            } catch (ClassCastException e) {
+                if (logger.isLoggable(Level.FINE)) {
+                    StringWriter stringWriter = new StringWriter();
+                    PrintWriter printWriter = new PrintWriter(stringWriter);
+                    e.printStackTrace(printWriter);
+                    logger.fine(stringWriter.toString());
+                }
             }
         }
     }

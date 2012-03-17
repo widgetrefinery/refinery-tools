@@ -17,31 +17,21 @@
 
 package org.widgetrefinery.util.event;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Since: 3/14/12 9:46 PM
  */
 public class EventBus {
-    private final Map<EventListener, Set<Class>> listeners;
+    private final Map<EventListener, Class> listeners;
 
     public EventBus() {
-        this.listeners = new HashMap<EventListener, Set<Class>>();
+        this.listeners = new HashMap<EventListener, Class>();
     }
 
-    public void add(final EventListener listener) {
-        Set<Class> classes = new HashSet<Class>();
-        for (Method method : listener.getClass().getMethods()) {
-            Class[] parameters = method.getParameterTypes();
-            if ("notify".equals(method.getName()) && !method.isBridge() && 1 == parameters.length && Event.class.isAssignableFrom(parameters[0])) {
-                classes.add(parameters[0]);
-            }
-        }
-        this.listeners.put(listener, classes);
+    public <T extends Event> void add(final Class<T> clazz, final EventListener<T> listener) {
+        this.listeners.put(listener, clazz);
     }
 
     public void remove(final EventListener listener) {
@@ -50,12 +40,9 @@ public class EventBus {
 
     @SuppressWarnings("unchecked")
     public void fireEvent(final Event event) {
-        for (Map.Entry<EventListener, Set<Class>> listener : this.listeners.entrySet()) {
-            for (Class clazz : listener.getValue()) {
-                if (clazz.isAssignableFrom(event.getClass())) {
-                    listener.getKey().notify(event);
-                    break;
-                }
+        for (Map.Entry<EventListener, Class> listener : this.listeners.entrySet()) {
+            if (listener.getValue().isAssignableFrom(event.getClass())) {
+                listener.getKey().notify(event);
             }
         }
     }

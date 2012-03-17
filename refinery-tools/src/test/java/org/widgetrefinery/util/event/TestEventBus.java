@@ -32,37 +32,29 @@ public class TestEventBus extends TestCase {
         StubEventListener1 listener1 = new StubEventListener1();
         StubEventListener2 listener2 = new StubEventListener2();
         StubEventListener3 listener3 = new StubEventListener3();
-        StubEventListener4 listener4 = new StubEventListener4();
-        bus.add(listener1);
-        bus.add(listener2);
-        bus.add(listener3);
-        bus.add(listener4);
+        bus.add(StubEvent1.class, listener1);
+        bus.add(StubEvent2.class, listener2);
+        bus.add(Event.class, listener3);
 
         //fire StubEvent1; listeners 1, 3, & 4 should be notified
         bus.fireEvent(new StubEvent1(10));
         assertEquals(1, listener1.values.size());
         assertEquals(0, listener2.values.size());
         assertEquals(1, listener3.values.size());
-        assertEquals(1, listener4.values.size());
         assertEquals(Integer.valueOf(10), listener1.values.get(0));
         assertEquals(Integer.valueOf(10), ((StubEvent1) listener3.values.get(0)).payload);
-        assertEquals(Integer.valueOf(10), ((StubEvent1) listener4.values.get(0)).payload);
         listener1.values.clear();
         listener3.values.clear();
-        listener4.values.clear();
 
         //fire StubEvent2; listeners 2, 3, & 4 should be notified
         bus.fireEvent(new StubEvent2(20));
         assertEquals(0, listener1.values.size());
         assertEquals(1, listener2.values.size());
         assertEquals(1, listener3.values.size());
-        assertEquals(1, listener4.values.size());
         assertEquals(Integer.valueOf(20), listener2.values.get(0));
         assertEquals(Integer.valueOf(20), ((StubEvent2) listener3.values.get(0)).payload);
-        assertEquals(Integer.valueOf(20), ((StubEvent2) listener4.values.get(0)).payload);
         listener2.values.clear();
         listener3.values.clear();
-        listener4.values.clear();
 
         //remove listener 3; remaining listeners should continue to function
         bus.remove(listener3);
@@ -70,9 +62,7 @@ public class TestEventBus extends TestCase {
         assertEquals(1, listener1.values.size());
         assertEquals(0, listener2.values.size());
         assertEquals(0, listener3.values.size());
-        assertEquals(1, listener4.values.size());
         assertEquals(Integer.valueOf(11), listener1.values.get(0));
-        assertEquals(Integer.valueOf(11), ((StubEvent1) listener4.values.get(0)).payload);
     }
 
     protected static class StubEvent1 implements Event {
@@ -117,8 +107,8 @@ public class TestEventBus extends TestCase {
         }
     }
 
-    protected static class StubEventListener3 implements EventListener {
-        protected final List<Event> values;
+    protected static class StubEventListener3 implements EventListener<Event> {
+        private final List<Event> values;
 
         public StubEventListener3() {
             this.values = new ArrayList<Event>();
@@ -127,13 +117,6 @@ public class TestEventBus extends TestCase {
         @Override
         public void notify(final Event event) {
             this.values.add(event);
-        }
-    }
-
-    protected static class StubEventListener4 extends StubEventListener3 {
-        @Override
-        public String toString() {
-            return "listener to test the EventBus's reflection logic; I don't define a notify() method but my parent does";
         }
     }
 }

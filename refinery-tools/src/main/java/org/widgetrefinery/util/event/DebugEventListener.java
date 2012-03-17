@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 /**
  * Since: 3/14/12 11:58 PM
  */
-public class DebugEventListener implements EventListener {
+public class DebugEventListener implements EventListener<Event> {
     private static final Logger logger = Logger.getLogger(DebugEventListener.class.getName());
 
     @Override

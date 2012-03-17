@@ -17,27 +17,31 @@
 
 package org.widgetrefinery.util.event;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Since: 3/14/12 9:46 PM
  */
 public class EventBus {
-    private static final Logger logger = Logger.getLogger(EventBus.class.getName());
-
-    private final Set<EventListener> listeners;
+    private final Map<EventListener, Set<Class>> listeners;
 
     public EventBus() {
-        this.listeners = new HashSet<EventListener>();
+        this.listeners = new HashMap<EventListener, Set<Class>>();
     }
 
     public void add(final EventListener listener) {
-        this.listeners.add(listener);
+        Set<Class> classes = new HashSet<Class>();
+        for (Method method : listener.getClass().getMethods()) {
+            Class[] parameters = method.getParameterTypes();
+            if ("notify".equals(method.getName()) && !method.isBridge() && 1 == parameters.length && Event.class.isAssignableFrom(parameters[0])) {
+                classes.add(parameters[0]);
+            }
+        }
+        this.listeners.put(listener, classes);
     }
 
     public void remove(final EventListener listener) {
@@ -46,15 +50,11 @@ public class EventBus {
 
     @SuppressWarnings("unchecked")
     public void fireEvent(final Event event) {
-        for (EventListener listener : this.listeners) {
-            try {
-                listener.notify(event);
-            } catch (ClassCastException e) {
-                if (logger.isLoggable(Level.FINE)) {
-                    StringWriter stringWriter = new StringWriter();
-                    PrintWriter printWriter = new PrintWriter(stringWriter);
-                    e.printStackTrace(printWriter);
-                    logger.fine(stringWriter.toString());
+        for (Map.Entry<EventListener, Set<Class>> listener : this.listeners.entrySet()) {
+            for (Class clazz : listener.getValue()) {
+                if (clazz.isAssignableFrom(event.getClass())) {
+                    listener.getKey().notify(event);
+                    break;
                 }
             }
         }

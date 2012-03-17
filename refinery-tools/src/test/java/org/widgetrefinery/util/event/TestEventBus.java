@@ -21,66 +21,48 @@ import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Since: 3/14/12 9:58 PM
  */
 public class TestEventBus extends TestCase {
-    private Handler handler;
-    private Level   oldLogLevel;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        this.handler = new ConsoleHandler();
-        this.handler.setLevel(Level.FINEST);
-        Logger logger = Logger.getLogger("");
-        logger.addHandler(this.handler);
-        this.oldLogLevel = logger.getLevel();
-        logger.setLevel(Level.FINEST);
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        Logger logger = Logger.getLogger("");
-        logger.removeHandler(this.handler);
-        logger.setLevel(this.oldLogLevel);
-        super.tearDown();
-    }
-
     public void testEventBus() {
         //setup the event bus
         EventBus bus = new EventBus();
         StubEventListener1 listener1 = new StubEventListener1();
         StubEventListener2 listener2 = new StubEventListener2();
         StubEventListener3 listener3 = new StubEventListener3();
+        StubEventListener4 listener4 = new StubEventListener4();
         bus.add(listener1);
         bus.add(listener2);
         bus.add(listener3);
+        bus.add(listener4);
 
-        //fire StubEvent1; listeners 1 & 3 should be notified
+        //fire StubEvent1; listeners 1, 3, & 4 should be notified
         bus.fireEvent(new StubEvent1(10));
         assertEquals(1, listener1.values.size());
         assertEquals(0, listener2.values.size());
         assertEquals(1, listener3.values.size());
+        assertEquals(1, listener4.values.size());
         assertEquals(Integer.valueOf(10), listener1.values.get(0));
         assertEquals(Integer.valueOf(10), ((StubEvent1) listener3.values.get(0)).payload);
+        assertEquals(Integer.valueOf(10), ((StubEvent1) listener4.values.get(0)).payload);
         listener1.values.clear();
         listener3.values.clear();
+        listener4.values.clear();
 
-        //fire StubEvent2; listeners 2 & 3 should be notified
+        //fire StubEvent2; listeners 2, 3, & 4 should be notified
         bus.fireEvent(new StubEvent2(20));
         assertEquals(0, listener1.values.size());
         assertEquals(1, listener2.values.size());
         assertEquals(1, listener3.values.size());
+        assertEquals(1, listener4.values.size());
         assertEquals(Integer.valueOf(20), listener2.values.get(0));
         assertEquals(Integer.valueOf(20), ((StubEvent2) listener3.values.get(0)).payload);
+        assertEquals(Integer.valueOf(20), ((StubEvent2) listener4.values.get(0)).payload);
         listener2.values.clear();
         listener3.values.clear();
+        listener4.values.clear();
 
         //remove listener 3; remaining listeners should continue to function
         bus.remove(listener3);
@@ -88,7 +70,9 @@ public class TestEventBus extends TestCase {
         assertEquals(1, listener1.values.size());
         assertEquals(0, listener2.values.size());
         assertEquals(0, listener3.values.size());
+        assertEquals(1, listener4.values.size());
         assertEquals(Integer.valueOf(11), listener1.values.get(0));
+        assertEquals(Integer.valueOf(11), ((StubEvent1) listener4.values.get(0)).payload);
     }
 
     protected static class StubEvent1 implements Event {
@@ -134,7 +118,7 @@ public class TestEventBus extends TestCase {
     }
 
     protected static class StubEventListener3 implements EventListener {
-        private final List<Event> values;
+        protected final List<Event> values;
 
         public StubEventListener3() {
             this.values = new ArrayList<Event>();
@@ -143,6 +127,13 @@ public class TestEventBus extends TestCase {
         @Override
         public void notify(final Event event) {
             this.values.add(event);
+        }
+    }
+
+    protected static class StubEventListener4 extends StubEventListener3 {
+        @Override
+        public String toString() {
+            return "listener to test the EventBus's reflection logic; I don't define a notify() method but my parent does";
         }
     }
 }

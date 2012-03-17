@@ -26,7 +26,7 @@ import java.util.List;
  * Since: 3/14/12 9:58 PM
  */
 public class TestEventBus extends TestCase {
-    public void testEventBus() {
+    public void testFireEvent() {
         //setup the event bus
         EventBus bus = new EventBus();
         StubEventListener1 listener1 = new StubEventListener1();
@@ -63,6 +63,17 @@ public class TestEventBus extends TestCase {
         assertEquals(0, listener2.values.size());
         assertEquals(0, listener3.values.size());
         assertEquals(Integer.valueOf(11), listener1.values.get(0));
+    }
+
+    public void testFireEventProtection() {
+        EventBus bus = new EventBus(4);
+        bus.add(StubEvent1.class, new StubEventListener1());
+        bus.add(StubEvent1.class, new InfiniteLoopEventListener(bus));
+        try {
+            bus.fireEvent(new StubEvent1(1));
+        } catch (Exception e) {
+            assertTrue(e.getMessage(), e.getMessage().startsWith("Event bus queue has exceeded 4 entries.\n"));
+        }
     }
 
     protected static class StubEvent1 implements Event {
@@ -117,6 +128,19 @@ public class TestEventBus extends TestCase {
         @Override
         public void notify(final Event event) {
             this.values.add(event);
+        }
+    }
+
+    protected static class InfiniteLoopEventListener implements EventListener<StubEvent1> {
+        private final EventBus eventBus;
+
+        public InfiniteLoopEventListener(final EventBus eventBus) {
+            this.eventBus = eventBus;
+        }
+
+        @Override
+        public void notify(final StubEvent1 event) {
+            this.eventBus.fireEvent(event);
         }
     }
 }

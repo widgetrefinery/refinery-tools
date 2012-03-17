@@ -17,17 +17,31 @@
 
 package org.widgetrefinery.util.event;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Since: 3/14/12 9:46 PM
  */
 public class EventBus {
+    private static final Logger logger             = Logger.getLogger(EventBus.class.getName());
+    private static final int    DEFAULT_QUEUE_SIZE = 16;
+
     private final Map<EventListener, Class> listeners;
+    private final List<EventLog>            queue;
+    private final int                       queueSize;
 
     public EventBus() {
+        this(DEFAULT_QUEUE_SIZE);
+    }
+
+    public EventBus(final int queueSize) {
         this.listeners = new HashMap<EventListener, Class>();
+        this.queue = new ArrayList<EventLog>(queueSize);
+        this.queueSize = queueSize;
     }
 
     public <T extends Event> void add(final Class<T> clazz, final EventListener<T> listener) {
@@ -40,10 +54,28 @@ public class EventBus {
 
     @SuppressWarnings("unchecked")
     public void fireEvent(final Event event) {
-        for (Map.Entry<EventListener, Class> listener : this.listeners.entrySet()) {
-            if (listener.getValue().isAssignableFrom(event.getClass())) {
-                listener.getKey().notify(event);
+        logger.fine("event fired: " + event.toString());
+        if (this.queueSize <= this.queue.size()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Event bus queue has exceeded ").append(this.queueSize).append(" entries.\n");
+            int eventNdx = 0;
+            for (EventLog eventLog : this.queue) {
+                eventLog.dump(sb, eventNdx++);
+            }
+            throw new RuntimeException(sb.toString());
+        }
+        EventLog eventLog = new EventLog(event, Thread.currentThread().getStackTrace()[2]);
+        this.queue.add(eventLog);
+
+        for (Map.Entry<EventListener, Class> entry : this.listeners.entrySet()) {
+            EventListener listener = entry.getKey();
+            Class eventClass = entry.getValue();
+            if (eventClass.isAssignableFrom(event.getClass())) {
+                eventLog.addListener(listener);
+                listener.notify(event);
             }
         }
+
+        this.queue.remove(this.queue.size() - 1);
     }
 }

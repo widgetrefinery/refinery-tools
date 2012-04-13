@@ -17,6 +17,8 @@
 
 package org.widgetrefinery.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,6 +105,21 @@ public class StringUtil {
         }
         sb.append(remaining);
 
+        return sb.toString();
+    }
+
+    public static String format(final String msg, final Throwable e) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintWriter writer = new PrintWriter(baos);
+        e.printStackTrace(writer);
+        writer.flush();
+        writer.close();
+
+        StringBuilder sb = new StringBuilder();
+        if (isNotBlank(msg)) {
+            sb.append(msg).append('\n');
+        }
+        sb.append(baos.toString());
         return sb.toString();
     }
 }

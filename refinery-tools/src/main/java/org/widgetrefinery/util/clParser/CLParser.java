@@ -19,19 +19,22 @@ package org.widgetrefinery.util.clParser;
 
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
+import org.widgetrefinery.util.lang.Translator;
+import org.widgetrefinery.util.lang.UtilTranslatorKey;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 
 /**
  * Since: 2/20/12 8:19 PM
  */
 public class CLParser {
+    private static final int CONSOLE_WIDTH = 80;
+
     private final Map<String, Argument> arguments;
     private final List<String>          leftovers;
     private       boolean               hasArguments;
@@ -74,18 +77,18 @@ public class CLParser {
         String name = rawName.substring(2);
         Argument argument = this.arguments.get(name);
         if (null == argument) {
-            throw new BadUserInputException("invalid argument", rawName);
+            throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_NO_SUCH_SWITCH, rawName), rawName);
         } else if (argument.isConsumesValue()) {
             if (2 == keyValuePair.length) {
                 String value = keyValuePair[1];
                 argument.parse(rawName, value);
             } else {
-                throw new BadUserInputException("missing value for argument " + rawName);
+                throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_SWITCH_MISSING_VALUE, rawName));
             }
         } else if (2 == keyValuePair.length) {
-            throw new BadUserInputException("unexpected value for argument " + rawName, keyValuePair[1]);
+            throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_UNEXPECTED_SWITCH_VALUE, rawName, keyValuePair[1]), keyValuePair[1]);
         } else {
-            argument.parse(rawName, "");
+            argument.parse(rawName, null);
         }
         this.hasArguments = true;
     }
@@ -94,13 +97,13 @@ public class CLParser {
         String rawName = "-" + name;
         Argument argument = this.arguments.get(name);
         if (null == argument) {
-            throw new BadUserInputException("invalid argument", rawName);
+            throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_NO_SUCH_SWITCH, rawName), rawName);
         } else if (argument.isConsumesValue()) {
             if (itr.hasNext()) {
                 String value = itr.next();
                 argument.parse(rawName, value);
             } else {
-                throw new BadUserInputException("missing value for argument " + rawName);
+                throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_SWITCH_MISSING_VALUE, rawName));
             }
         } else {
             argument.parse(rawName, null);
@@ -125,33 +128,24 @@ public class CLParser {
         return this.leftovers;
     }
 
-    public String getHelpMessage(final Class mainClass, final String[] additionalArguments, final String description) {
+    public String getHelpMessage(final Class mainClass) {
         StringBuilder sb = new StringBuilder();
 
-        String command;
-        try {
-            File mainFile = getJarFile(mainClass);
-            command = "java -jar " + mainFile.getName();
-        } catch (Exception e) {
-            command = "java " + mainClass.getName();
-        }
+        String command = getCommand(mainClass);
+        sb.append(StringUtil.wordWrap(Translator.get(UtilTranslatorKey.CL_HELP_USAGE, command), CONSOLE_WIDTH, "", "  "));
+        sb.append("\n\n");
 
-        sb.append("USAGE:\n  ").append(command).append(" [options]");
-        if (null != additionalArguments) {
-            for (String additionalArgument : additionalArguments) {
-                if (StringUtil.isNotBlank(additionalArgument)) {
-                    sb.append(' ').append(additionalArgument.trim());
-                }
-            }
-        }
-        sb.append("\n");
-
+        String description = Translator.get(UtilTranslatorKey.CL_HELP_DESCRIPTION);
         if (StringUtil.isNotBlank(description)) {
-            String formattedDescription = StringUtil.wordWrap(description.trim(), 80, "  ", "    ");
-            sb.append("\nDESCRIPTION:\n").append(formattedDescription).append("\n");
+            sb.append(StringUtil.wordWrap(description, CONSOLE_WIDTH, "", "  "));
+            sb.append("\n\n");
         }
 
-        sb.append("\nOPTIONS:\n");
+        sb.append(StringUtil.wordWrap(Translator.get(UtilTranslatorKey.CL_HELP_OPTIONS), CONSOLE_WIDTH));
+        sb.append('\n');
+        String valueText = Translator.get(UtilTranslatorKey.CL_HELP_OPTIONS_SWITCH_VALUE);
+        String longSwitchValueText = "=[" + valueText + "]";
+        String shortSwitchValueText = " [" + valueText + "]";
         Set<Argument> arguments = new TreeSet<Argument>(this.arguments.values());
         for (Argument argument : arguments) {
             for (String argumentName : argument.getNames()) {
@@ -159,17 +153,17 @@ public class CLParser {
                 if (1 < argumentName.length()) {
                     sb.append("--").append(argumentName);
                     if (argument.isConsumesValue()) {
-                        sb.append("=[value]");
+                        sb.append(longSwitchValueText);
                     }
                 } else {
                     sb.append('-').append(argumentName);
                     if (argument.isConsumesValue()) {
-                        sb.append(" [value]");
+                        sb.append(shortSwitchValueText);
                     }
                 }
                 sb.append("\n");
             }
-            String argumentDescription = StringUtil.wordWrap(argument.getDescription().trim(), 80, "    ", "    ");
+            String argumentDescription = StringUtil.wordWrap(argument.getDescription().trim(), CONSOLE_WIDTH, "    ", "    ");
             sb.append(argumentDescription).append("\n");
         }
 
@@ -189,14 +183,19 @@ public class CLParser {
                 input.close();
             }
         } else {
-            byte[] msg = StringUtil.wordWrap("License file not found. This should have displayed the GPLv3 license.", 80).getBytes();
+            byte[] msg = StringUtil.wordWrap(Translator.get(UtilTranslatorKey.CL_ERROR_MISSING_LICENSE), CONSOLE_WIDTH).getBytes();
             outputStream.write(msg);
             outputStream.flush();
         }
     }
 
-    public File getJarFile(final Class mainClass) throws URISyntaxException {
-        URI mainURI = mainClass.getProtectionDomain().getCodeSource().getLocation().toURI();
-        return new File(mainURI);
+    protected String getCommand(final Class mainClass) {
+        try {
+            URI mainURI = mainClass.getProtectionDomain().getCodeSource().getLocation().toURI();
+            File file = new File(mainURI);
+            return "java -jar " + file.getName();
+        } catch (Exception e) {
+            return "java " + mainClass.getName();
+        }
     }
 }

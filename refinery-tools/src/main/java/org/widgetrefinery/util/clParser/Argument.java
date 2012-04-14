@@ -19,6 +19,8 @@ package org.widgetrefinery.util.clParser;
 
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
+import org.widgetrefinery.util.lang.Translator;
+import org.widgetrefinery.util.lang.UtilTranslatorKey;
 
 /**
  * Since: 3/3/12 8:53 PM
@@ -63,7 +65,7 @@ public class Argument implements Comparable<Argument> {
         try {
             this.value = this.type.parse(rawValue, this.value);
         } catch (BadUserInputException e) {
-            throw new BadUserInputException("invalid value for " + argument, e);
+            throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_BAD_SWITCH_VALUE, argument, rawValue), e);
         }
     }
 

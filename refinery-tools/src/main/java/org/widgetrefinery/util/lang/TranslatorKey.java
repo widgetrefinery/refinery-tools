@@ -15,30 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.widgetrefinery.util;
+package org.widgetrefinery.util.lang;
 
 /**
- * Since: 3/6/12 8:47 PM
+ * Represents a single key in the translation properties file. The purpose for
+ * this class is to strongly type the key rather than use raw strings which
+ * should help with maintenance, refactoring, etc.
+ *
+ * @see org.widgetrefinery.util.lang.Translator
+ * @since 4/14/12 12:44 AM
  */
-public class BadUserInputException extends RuntimeException {
-    private final Object badValue;
-
-    public BadUserInputException(final String msg) {
-        super(msg);
-        this.badValue = null;
-    }
-
-    public BadUserInputException(final String msg, final Object badValue) {
-        super(msg);
-        this.badValue = badValue;
-    }
-
-    public BadUserInputException(final String msg, final BadUserInputException exception) {
-        super(msg, exception);
-        this.badValue = exception.getBadValue();
-    }
-
-    public Object getBadValue() {
-        return this.badValue;
-    }
+public interface TranslatorKey {
+    /**
+     * The key to look up in the translation properties file.
+     *
+     * @return string key
+     */
+    String getKey();
 }

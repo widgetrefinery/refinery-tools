@@ -18,11 +18,22 @@
 package org.widgetrefinery.util.clParser;
 
 import junit.framework.TestCase;
+import org.widgetrefinery.util.lang.Translator;
+
+import java.util.Locale;
 
 /**
  * Since: 3/4/12 6:29 PM
  */
 public class TestCLParser extends TestCase {
+    private static final String translate = "example_translate";
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        Translator.configure(translate, Locale.getDefault());
+    }
+
     public void testDuplicateArgumentNames() {
         try {
             new CLParser(new String[0],
@@ -141,21 +152,17 @@ public class TestCLParser extends TestCase {
                                  "    custom\n" +
                                  "    argument\n" +
                                  "        description\n";
-        String msg = clParser.getHelpMessage(String.class, null, null);
+        String msg = clParser.getHelpMessage(String.class);
         assertEquals(expectedUsage + "\n" + expectedDescription + expectedOptions, msg);
 
-        String[] args = new String[]{"foo", " ", "bar", null};
-        msg = clParser.getHelpMessage(String.class, args, null);
-        assertEquals(expectedUsage + " foo bar\n" + expectedDescription + expectedOptions, msg);
+        Locale locale = new Locale("test_cl_description");
+        Translator.configure(translate, locale);
 
         expectedDescription = "\nDESCRIPTION:\n" +
                               "  custom\n" +
                               "  application\n" +
-                              "      description\n";
-        msg = clParser.getHelpMessage(String.class, null, "custom\napplication\n\tdescription");
+                              "    description\n";
+        msg = clParser.getHelpMessage(String.class);
         assertEquals(expectedUsage + "\n" + expectedDescription + expectedOptions, msg);
-
-        msg = clParser.getHelpMessage(String.class, args, "custom\napplication\n\tdescription");
-        assertEquals(expectedUsage + " foo bar\n" + expectedDescription + expectedOptions, msg);
     }
 }

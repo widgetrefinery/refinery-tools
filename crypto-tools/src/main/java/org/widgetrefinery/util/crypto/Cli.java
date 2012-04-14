@@ -20,6 +20,8 @@ package org.widgetrefinery.util.crypto;
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
 import org.widgetrefinery.util.clParser.*;
+import org.widgetrefinery.util.lang.Translator;
+import org.widgetrefinery.util.lang.UtilTranslatorKey;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,21 +31,12 @@ import java.util.List;
 /**
  * Since: 3/1/12 10:49 PM
  */
-public class Cli {
+public class Cli extends AbstractCli {
     public static void main(String[] args) throws IOException {
-        try {
-            Cli cli = new Cli();
-            cli.processCommandLine(args);
-        } catch (Exception e) {
-            if (null == System.getProperty("debug")) {
-                System.err.println(e.getMessage());
-            } else {
-                e.printStackTrace(System.err);
-            }
-            System.exit(-1);
-        }
+        new Cli().start(args);
     }
 
+    @Override
     protected void processCommandLine(final String[] args) throws IllegalArgumentException, IOException, BadUserInputException {
         CLParser clParser = new CLParser(args,
                                          new Argument("e|encoding",
@@ -60,9 +53,7 @@ public class Cli {
                                                       "Displays the GPLv3 license that this software is released under."));
 
         if (!clParser.hasArguments() || Boolean.TRUE == clParser.getValue("help")) {
-            System.err.println(clParser.getHelpMessage(Cli.class,
-                                                       new String[]{"[input filename]", "[input filename]", "..."},
-                                                       "Computes various hashes against the given input data. Input data can come from filenames on the command line or stdin."));
+            System.err.println(clParser.getHelpMessage(Cli.class));
             System.exit(0);
         }
         if (Boolean.TRUE == clParser.getValue("license")) {
@@ -131,7 +122,7 @@ public class Cli {
                         cryptoHash = DigestCryptoHash.createSHA1(cryptoHash);
                         break;
                     default:
-                        throw new BadUserInputException("invalid encoding", encodingKey);
+                        throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_BAD_SWITCH_VALUE, "encoding", encodingKey), encodingKey);
                 }
             }
         }

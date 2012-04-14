@@ -17,27 +17,58 @@
 
 package org.widgetrefinery.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Since: 3/4/12 10:17 PM
+ * Collection of helper methods for working with strings. This class was
+ * inspired by <a href="http://commons.apache.org/lang/">apache commons</a>.
+ * The motivation for building this class was to keep the application small.
+ *
+ * @since 3/4/12 10:17 PM
  */
 public class StringUtil {
+    /**
+     * Checks if the given string is blank. Blank is defined as either null,
+     * empty string, or a string with only whitespace.
+     *
+     * @param value string to check
+     * @return true if blank
+     * @see #isNotBlank(String)
+     */
     public static boolean isBlank(final String value) {
         return null == value || value.trim().isEmpty();
     }
 
+    /**
+     * Checks if the given string is not blank. This returns the opposite of
+     * {@link #isBlank(String)}. This is provided to help keep the code clear
+     * as it can be difficult to distinguish !isBlank(str) vs isBlank(str).
+     *
+     * @param value string to check
+     * @return true if not blank
+     * @see #isBlank(String)
+     */
     public static boolean isNotBlank(final String value) {
         return !isBlank(value);
     }
 
+    /**
+     * Null-safe trim.
+     *
+     * @param value string to trim
+     * @return trimmed string
+     */
     public static String trimToEmpty(final String value) {
         return null != value ? value.trim() : "";
     }
 
+    /**
+     * Formats the given byte array as a hexadecimal string.
+     *
+     * @param input byte array to format
+     * @return hexadecimal string
+     */
     public static String toHexString(final byte[] input) {
         StringBuilder sb = new StringBuilder();
         for (byte value : input) {
@@ -50,16 +81,40 @@ public class StringUtil {
         return sb.toString();
     }
 
+    /**
+     * Reformat the given string so that no single line is longer than the
+     * given width. Wrapping is done on word boundaries. Note that tab
+     * characters are replaced with a constant sequence of spaces.
+     *
+     * @param value string to format
+     * @param width width to restrict each line to
+     * @return reformatted string
+     * @throws IllegalArgumentException if the width is smaller than the tab size
+     * @see #wordWrap(String, int, String, String)
+     */
     public static String wordWrap(final String value, final int width) throws IllegalArgumentException {
-        return wordWrap(value, width, "", "");
+        return wordWrap(value, width, "", "    ");
     }
 
-    public static String wordWrap(final String value, final int width, final String prefix, final String tabPrefix) throws IllegalArgumentException {
+    /**
+     * Reformat the given string so that no single line is longer than the
+     * given width. Wrapping is done on word boundaries. Each new line after
+     * the first will be prefixed with the given prefix. Tab characters will
+     * be replaced with the given string.
+     *
+     * @param value  string to format
+     * @param width  width to restrict each line to
+     * @param prefix prefix for each line (except the first line)
+     * @param tab    string to replace tab characters with
+     * @return reformatted string
+     * @throws IllegalArgumentException if the width is smaller than the prefix + tab
+     */
+    public static String wordWrap(final String value, final int width, final String prefix, final String tab) throws IllegalArgumentException {
         if (prefix.length() >= width) {
             throw new IllegalArgumentException("newline prefix is longer than the requested wrapping width");
         }
-        if (prefix.length() + tabPrefix.length() >= width) {
-            throw new IllegalArgumentException("newline prefix + tab prefix is longer than the requested wrapping width");
+        if (prefix.length() + tab.length() >= width) {
+            throw new IllegalArgumentException("newline prefix + tab is longer than the requested wrapping width");
         }
 
         StringBuilder sb = new StringBuilder();
@@ -92,7 +147,7 @@ public class StringUtil {
                 curLineWidth = prefix.length();
                 whitespace = new StringBuilder();
             } else if ("\t".equals(matched)) {
-                whitespace.append(tabPrefix);
+                whitespace.append(tab);
             } else {
                 whitespace.append(matched);
             }
@@ -105,21 +160,6 @@ public class StringUtil {
         }
         sb.append(remaining);
 
-        return sb.toString();
-    }
-
-    public static String format(final String msg, final Throwable e) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintWriter writer = new PrintWriter(baos);
-        e.printStackTrace(writer);
-        writer.flush();
-        writer.close();
-
-        StringBuilder sb = new StringBuilder();
-        if (isNotBlank(msg)) {
-            sb.append(msg).append('\n');
-        }
-        sb.append(baos.toString());
         return sb.toString();
     }
 }

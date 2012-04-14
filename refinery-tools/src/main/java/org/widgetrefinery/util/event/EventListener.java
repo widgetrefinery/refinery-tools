@@ -18,8 +18,17 @@
 package org.widgetrefinery.util.event;
 
 /**
- * Since: 3/14/12 9:46 PM
+ * A class that is interested in a particular event.
+ *
+ * @see org.widgetrefinery.util.event.EventBus
+ * @since 3/14/12 9:46 PM
  */
 public interface EventListener<E extends Event> {
+    /**
+     * Invoked by the {@link org.widgetrefinery.util.event.EventBus} whenever
+     * an interesting event is fired.
+     *
+     * @param event event that was fired
+     */
     void notify(E event);
 }

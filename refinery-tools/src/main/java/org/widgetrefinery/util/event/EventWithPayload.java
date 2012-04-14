@@ -18,12 +18,15 @@
 package org.widgetrefinery.util.event;
 
 /**
- * Since: 4/12/12 9:29 PM
+ * An event with a related value.
+ *
+ * @see {@inheritDoc}
+ * @since 4/12/12 9:29 PM
  */
-public class ValueEvent<V> implements Event {
+public class EventWithPayload<V> implements Event {
     private final V value;
 
-    protected ValueEvent(final V value) {
+    protected EventWithPayload(final V value) {
         this.value = value;
     }
 
@@ -31,6 +34,11 @@ public class ValueEvent<V> implements Event {
         return this.value;
     }
 
+    /**
+     * Returns the event class name and payload value.
+     *
+     * @return event class name and payload value
+     */
     @Override
     public String toString() {
         return getClass().getName() + ": " + getValue();

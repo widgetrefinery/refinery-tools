@@ -20,7 +20,8 @@ package org.widgetrefinery.util.clParser;
 import org.widgetrefinery.util.BadUserInputException;
 
 /**
- * Since: 3/4/12 6:33 PM
+ * @see org.widgetrefinery.util.clParser.CLParser
+ * @since 3/4/12 6:33 PM
  */
 public interface ArgumentType {
     boolean isConsumesValue();

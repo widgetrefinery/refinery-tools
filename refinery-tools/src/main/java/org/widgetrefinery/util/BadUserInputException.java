@@ -18,7 +18,9 @@
 package org.widgetrefinery.util;
 
 /**
- * Since: 3/6/12 8:47 PM
+ * Represents an error caused by bad user input.
+ *
+ * @since 3/6/12 8:47 PM
  */
 public class BadUserInputException extends RuntimeException {
     private final Object badValue;

@@ -18,7 +18,7 @@
 package org.widgetrefinery.util.clParser;
 
 /**
- * Since: 3/3/12 8:46 PM
+ * @since 3/3/12 8:46 PM
  */
 public abstract class AbstractArgumentType implements ArgumentType {
     private final boolean consumesValue;

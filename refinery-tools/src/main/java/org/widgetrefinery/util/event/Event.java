@@ -18,7 +18,11 @@
 package org.widgetrefinery.util.event;
 
 /**
- * Since: 3/14/12 9:49 PM
+ * Represents a message sent on the event bus. Subclasses should override
+ * toString() as well to provide meaningful data for logging purposes.
+ *
+ * @see org.widgetrefinery.util.event.EventBus
+ * @since 3/14/12 9:49 PM
  */
 public interface Event {
 }

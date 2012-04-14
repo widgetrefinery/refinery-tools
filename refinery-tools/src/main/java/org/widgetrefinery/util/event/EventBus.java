@@ -24,7 +24,15 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Since: 3/14/12 9:46 PM
+ * A simple event bus for sending messages between different parts of an
+ * application. This was built to assist swing applications so it uses a
+ * single-thread design. This means you can run into problems if a listener
+ * fires an event that triggers a listener that fires an event that triggers
+ * a listener that, etc. The event bus protects against this by monitoring
+ * the number of events in flight and will fail fast if this number exceeds
+ * a certain threshold.
+ *
+ * @since 3/14/12 9:46 PM
  */
 public class EventBus {
     private static final Logger logger             = Logger.getLogger(EventBus.class.getName());
@@ -34,26 +42,52 @@ public class EventBus {
     private final List<EventLog>            queue;
     private final int                       queueSize;
 
+    /**
+     * Creates a new instance with the default queue size.
+     */
     public EventBus() {
         this(DEFAULT_QUEUE_SIZE);
     }
 
+    /**
+     * Creates a new instance with the given queue size.
+     *
+     * @param queueSize max allowed events in flight
+     */
     public EventBus(final int queueSize) {
         this.listeners = new HashMap<EventListener, Class>();
         this.queue = new ArrayList<EventLog>(queueSize);
         this.queueSize = queueSize;
     }
 
+    /**
+     * Adds a new listener to the event bus.
+     *
+     * @param clazz    event class to register the listener for
+     * @param listener listener to register
+     * @param <T>      event class
+     */
     public <T extends Event> void add(final Class<T> clazz, final EventListener<T> listener) {
         this.listeners.put(listener, clazz);
     }
 
+    /**
+     * Removes the given listener from the event bus.
+     *
+     * @param listener listener to remove
+     */
     public void remove(final EventListener listener) {
         this.listeners.remove(listener);
     }
 
+    /**
+     * Sends an event to the listeners that are interested.
+     *
+     * @param event event to send
+     * @throws RuntimeException if the number of events in flight have exceeded the threshold
+     */
     @SuppressWarnings("unchecked")
-    public void fireEvent(final Event event) {
+    public void fireEvent(final Event event) throws RuntimeException {
         logger.fine("event fired: " + event.toString());
         if (this.queueSize <= this.queue.size()) {
             StringBuilder sb = new StringBuilder();

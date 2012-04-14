@@ -43,7 +43,7 @@ public class Translator {
      * @see #configure(String, java.util.Locale)
      */
     public static void configure() {
-        configure(DEFAULT_NAME, Locale.getDefault());
+        configure(Locale.getDefault());
     }
 
     /**

@@ -19,6 +19,7 @@ package org.widgetrefinery.util.cl;
 
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
+import org.widgetrefinery.util.lang.UtilTranslationKey;
 
 import java.util.regex.Pattern;
 
@@ -68,7 +69,7 @@ public class StringArgumentType extends AbstractArgumentType {
     public String parse(String value) throws BadUserInputException {
         value = StringUtil.trimToEmpty(value);
         if (null != this.expectedPattern && !this.expectedPattern.matcher(value).matches()) {
-            throw new BadUserInputException("invalid value", value);
+            throw new BadUserInputException(UtilTranslationKey.CL_ERROR_BAD_SWITCH_VALUE, value);
         }
         return value;
     }

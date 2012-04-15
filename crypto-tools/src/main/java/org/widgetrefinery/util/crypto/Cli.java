@@ -20,7 +20,6 @@ package org.widgetrefinery.util.crypto;
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
 import org.widgetrefinery.util.cl.*;
-import org.widgetrefinery.util.lang.Translator;
 import org.widgetrefinery.util.lang.UtilTranslationKey;
 
 import java.io.FileInputStream;
@@ -125,7 +124,7 @@ public class Cli extends AbstractCli {
                         cryptoHash = DigestCryptoHash.createSHA1(cryptoHash);
                         break;
                     default:
-                        throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_BAD_SWITCH_VALUE, "encoding", encodingKey), encodingKey);
+                        throw new BadUserInputException(UtilTranslationKey.CL_ERROR_BAD_SWITCH_VALUE, "encoding", encodingKey);
                 }
             }
         }

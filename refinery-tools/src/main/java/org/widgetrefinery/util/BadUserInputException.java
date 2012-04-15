@@ -17,30 +17,23 @@
 
 package org.widgetrefinery.util;
 
+import org.widgetrefinery.util.lang.TranslationKey;
+import org.widgetrefinery.util.lang.Translator;
+
 /**
  * Represents an error caused by bad user input.
  *
  * @since 3/6/12 8:47 PM
  */
 public class BadUserInputException extends RuntimeException {
-    private final Object badValue;
+    private final TranslationKey key;
 
-    public BadUserInputException(final String msg) {
-        super(msg);
-        this.badValue = null;
+    public BadUserInputException(final TranslationKey key, final Object... badValues) {
+        super(Translator.get(key, badValues));
+        this.key = key;
     }
 
-    public BadUserInputException(final String msg, final Object badValue) {
-        super(msg);
-        this.badValue = badValue;
-    }
-
-    public BadUserInputException(final String msg, final BadUserInputException exception) {
-        super(msg, exception);
-        this.badValue = exception.getBadValue();
-    }
-
-    public Object getBadValue() {
-        return this.badValue;
+    public TranslationKey getKey() {
+        return this.key;
     }
 }

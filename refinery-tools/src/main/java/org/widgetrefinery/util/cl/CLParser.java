@@ -91,16 +91,16 @@ public class CLParser {
         String name = rawName.substring(2);
         Argument argument = this.arguments.get(name);
         if (null == argument) {
-            throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_NO_SUCH_SWITCH, rawName), rawName);
+            throw new BadUserInputException(UtilTranslationKey.CL_ERROR_NO_SUCH_SWITCH, rawName);
         } else if (argument.isConsumesValue()) {
             if (2 == keyValuePair.length) {
                 String value = keyValuePair[1];
                 argument.parse(rawName, value);
             } else {
-                throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_SWITCH_MISSING_VALUE, rawName));
+                throw new BadUserInputException(UtilTranslationKey.CL_ERROR_SWITCH_MISSING_VALUE, rawName);
             }
         } else if (2 == keyValuePair.length) {
-            throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_UNEXPECTED_SWITCH_VALUE, rawName, keyValuePair[1]), keyValuePair[1]);
+            throw new BadUserInputException(UtilTranslationKey.CL_ERROR_UNEXPECTED_SWITCH_VALUE, rawName, keyValuePair[1]);
         } else {
             argument.parse(rawName, null);
         }
@@ -111,13 +111,13 @@ public class CLParser {
         String rawName = "-" + name;
         Argument argument = this.arguments.get(name);
         if (null == argument) {
-            throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_NO_SUCH_SWITCH, rawName), rawName);
+            throw new BadUserInputException(UtilTranslationKey.CL_ERROR_NO_SUCH_SWITCH, rawName);
         } else if (argument.isConsumesValue()) {
             if (itr.hasNext()) {
                 String value = itr.next();
                 argument.parse(rawName, value);
             } else {
-                throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_SWITCH_MISSING_VALUE, rawName));
+                throw new BadUserInputException(UtilTranslationKey.CL_ERROR_SWITCH_MISSING_VALUE, rawName);
             }
         } else {
             argument.parse(rawName, null);

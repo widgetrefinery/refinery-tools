@@ -19,7 +19,6 @@ package org.widgetrefinery.util.cl;
 
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
-import org.widgetrefinery.util.lang.Translator;
 import org.widgetrefinery.util.lang.UtilTranslationKey;
 
 /**
@@ -96,7 +95,7 @@ public class Argument implements Comparable<Argument> {
         try {
             this.value = this.type.parse(rawValue);
         } catch (BadUserInputException e) {
-            throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_BAD_SWITCH_VALUE, argument, rawValue), e);
+            throw new BadUserInputException(UtilTranslationKey.CL_ERROR_BAD_SWITCH_VALUE, argument, rawValue);
         }
     }
 

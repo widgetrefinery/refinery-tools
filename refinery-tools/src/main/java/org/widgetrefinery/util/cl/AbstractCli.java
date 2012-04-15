@@ -17,6 +17,7 @@
 
 package org.widgetrefinery.util.cl;
 
+import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.lang.Translator;
 
 import java.util.logging.ConsoleHandler;
@@ -52,6 +53,9 @@ public abstract class AbstractCli {
         try {
             Translator.configure();
             processCommandLine(args);
+        } catch (BadUserInputException e) {
+            System.err.println(e.getMessage());
+            System.exit(-1);
         } catch (Exception e) {
             if (debugMode) {
                 e.printStackTrace(System.err);

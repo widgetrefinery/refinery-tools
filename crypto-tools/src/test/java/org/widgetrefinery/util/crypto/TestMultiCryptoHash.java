@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.io.PipedInputStream;
 
 /**
- * Since: 3/4/12 11:55 PM
+ * @since 3/4/12 11:55 PM
  */
 public class TestMultiCryptoHash extends TestCase {
     public void testInputStreamHash() throws Exception {

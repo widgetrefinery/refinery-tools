@@ -21,10 +21,25 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Since: 3/4/12 7:37 PM
+ * Represents a utility class that knows how to compute hashes.
+ *
+ * @since 3/4/12 7:37 PM
  */
 public interface CryptoHash {
+    /**
+     * Hashes the given data.
+     *
+     * @param input input data to hash
+     * @return hashed data as a byte array
+     * @throws IOException if an error occurred reading from input
+     */
     byte[] getHash(InputStream input) throws IOException;
 
+    /**
+     * Hashes the given data.
+     *
+     * @param input input data to hash
+     * @return hashed data as a byte array
+     */
     byte[] getHash(String input);
 }

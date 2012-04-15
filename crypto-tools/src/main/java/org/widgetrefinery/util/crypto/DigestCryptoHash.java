@@ -23,15 +23,30 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Since: 3/4/12 7:51 PM
+ * Utility class for computing hashes supported by
+ * {@link java.security.MessageDigest}.
+ *
+ * @see java.security.MessageDigest
+ * @since 3/4/12 7:51 PM
  */
 public class DigestCryptoHash extends AbstractCryptoHash {
     private final String type;
 
+    /**
+     * Creates an instance that will hash data given to it.
+     *
+     * @param type digest type
+     */
     protected DigestCryptoHash(final String type) {
         this.type = type;
     }
 
+    /**
+     * Creates an instance that will hash the result from the given CryptoHash.
+     *
+     * @param chain upstream CryptoHash
+     * @param type  digest type
+     */
     protected DigestCryptoHash(final CryptoHash chain, final String type) {
         super(chain);
         this.type = type;
@@ -61,18 +76,40 @@ public class DigestCryptoHash extends AbstractCryptoHash {
         }
     }
 
+    /**
+     * Creates a new instance that computes MD5 hashes.
+     *
+     * @return MD5 instance
+     */
     public static DigestCryptoHash createMD5() {
         return new DigestCryptoHash("MD5");
     }
 
+    /**
+     * Creates a new instance that computes MD5 hashes.
+     *
+     * @param chain upstream CryptoHash
+     * @return MD5 instance
+     */
     public static DigestCryptoHash createMD5(final CryptoHash chain) {
         return new DigestCryptoHash(chain, "MD5");
     }
 
+    /**
+     * Creates a new instance that computes SHA1 hashes.
+     *
+     * @return SHA1 instance
+     */
     public static DigestCryptoHash createSHA1() {
         return new DigestCryptoHash("SHA-1");
     }
 
+    /**
+     * Creates a new instance that computes SHA1 hashes.
+     *
+     * @param chain upstream CryptoHash
+     * @return SHA1 instance
+     */
     public static DigestCryptoHash createSHA1(final CryptoHash chain) {
         return new DigestCryptoHash(chain, "SHA-1");
     }

@@ -26,7 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 /**
- * Since: 3/4/12 7:56 PM
+ * @since 3/4/12 7:56 PM
  */
 public class TestCRC32CryptoHash extends TestCase {
     public void testInputStreamHash() throws Exception {

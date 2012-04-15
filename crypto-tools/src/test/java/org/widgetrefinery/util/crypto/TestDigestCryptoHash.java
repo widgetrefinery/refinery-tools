@@ -26,7 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 /**
- * Since: 3/4/12 8:10 PM
+ * @since 3/4/12 8:10 PM
  */
 public class TestDigestCryptoHash extends TestCase {
     public void testMD5InputStreamHash() throws Exception {

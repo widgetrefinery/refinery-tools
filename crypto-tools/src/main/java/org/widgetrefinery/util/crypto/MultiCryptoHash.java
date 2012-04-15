@@ -25,17 +25,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Since: 3/4/12 10:36 PM
+ * Utility class for computing multiple hashes simultaneously.
+ *
+ * @since 3/4/12 10:36 PM
  */
 public class MultiCryptoHash {
     private static final int BUFFER_SIZE = 1024;
 
     private final CryptoHash[] cryptoHashes;
 
+    /**
+     * @param cryptoHashes list of hashes to compute
+     */
     public MultiCryptoHash(final CryptoHash... cryptoHashes) {
         this.cryptoHashes = cryptoHashes;
     }
 
+    /**
+     * Hashes the given data.
+     *
+     * @param input input data to hash
+     * @return array of hashed data as a byte array
+     * @throws IOException if an error occurred reading from input
+     */
     public byte[][] getHashes(InputStream input) throws IOException {
         List<PipedOutputStream> sources = new ArrayList<PipedOutputStream>(this.cryptoHashes.length);
         List<CryptoThread> threads = new ArrayList<CryptoThread>(this.cryptoHashes.length);
@@ -84,6 +96,12 @@ public class MultiCryptoHash {
         return results;
     }
 
+    /**
+     * Hashes the given data.
+     *
+     * @param input input data to hash
+     * @return array of hashed data as a byte array
+     */
     public byte[][] getHashes(String input) {
         byte[][] results = new byte[this.cryptoHashes.length][];
         for (int ndx = 0; ndx < results.length; ndx++) {
@@ -92,6 +110,9 @@ public class MultiCryptoHash {
         return results;
     }
 
+    /**
+     * Represents any errors thrown by the worker threads.
+     */
     public static class CryptoHashException extends RuntimeException {
         private final List<Exception> errors;
 
@@ -105,6 +126,9 @@ public class MultiCryptoHash {
         }
     }
 
+    /**
+     * Worker thread for computing a single hash.
+     */
     protected static class CryptoThread extends Thread {
         private final CryptoHash       cryptoHash;
         private final PipedInputStream inputStream;

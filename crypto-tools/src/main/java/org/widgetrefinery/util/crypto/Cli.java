@@ -29,7 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Since: 3/1/12 10:49 PM
+ * Provides a command-line interface to the hashing functions. This was built
+ * mostly to test out {@link org.widgetrefinery.util.clParser.CLParser}.
+ *
+ * @since 3/1/12 10:49 PM
  */
 public class Cli extends AbstractCli {
     public static void main(String[] args) throws IOException {

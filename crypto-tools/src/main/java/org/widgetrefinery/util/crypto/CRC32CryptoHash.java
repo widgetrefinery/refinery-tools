@@ -22,12 +22,22 @@ import java.io.InputStream;
 import java.util.zip.CRC32;
 
 /**
- * Since: 3/4/12 7:44 PM
+ * Utility class for computing CRC32 hashes.
+ *
+ * @since 3/4/12 7:44 PM
  */
 public class CRC32CryptoHash extends AbstractCryptoHash {
+    /**
+     * Creates an instance that will hash data given to it.
+     */
     public CRC32CryptoHash() {
     }
 
+    /**
+     * Creates an instance that will hash the result from the given CryptoHash.
+     *
+     * @param chain upstream CryptoHash
+     */
     public CRC32CryptoHash(final CryptoHash chain) {
         super(chain);
     }
@@ -49,6 +59,12 @@ public class CRC32CryptoHash extends AbstractCryptoHash {
         return toByteArray((int) crc32.getValue());
     }
 
+    /**
+     * Converts the CRC32 result into a byte array.
+     *
+     * @param input CRC32 hash
+     * @return byte array representing the hash
+     */
     protected byte[] toByteArray(final int input) {
         return new byte[]{
                 (byte) ((input >> 24) & 0xFF),

@@ -21,21 +21,43 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Since: 3/4/12 7:39 PM
+ * A base implementation of CryptoHash that other classes can build off of.
+ *
+ * @since 3/4/12 7:39 PM
  */
 public abstract class AbstractCryptoHash implements CryptoHash {
+    /**
+     * Suggested read buffer size.
+     */
     protected static final int BUFFER_SIZE = 1024;
 
     private final CryptoHash chain;
 
-    public AbstractCryptoHash() {
+    /**
+     * Creates an instance that will hash data given to it.
+     */
+    protected AbstractCryptoHash() {
         this(null);
     }
 
-    public AbstractCryptoHash(final CryptoHash chain) {
+    /**
+     * Creates an instance that will hash the result from the given CryptoHash.
+     *
+     * @param chain upstream CryptoHash
+     */
+    protected AbstractCryptoHash(final CryptoHash chain) {
         this.chain = chain;
     }
 
+    /**
+     * If an upstream CryptoHash was provided to the constructor, the upstream
+     * CryptoHash will hash the data and the result will be hashed by this
+     * class. Otherwise this class will hash the given data.
+     *
+     * @param input input data to hash
+     * @return hashed data as a byte array
+     * @throws IOException if an error occurred reading from input
+     */
     @Override
     public byte[] getHash(final InputStream input) throws IOException {
         byte[] result;
@@ -48,6 +70,14 @@ public abstract class AbstractCryptoHash implements CryptoHash {
         return result;
     }
 
+    /**
+     * If an upstream CryptoHash was provided to the constructor, the upstream
+     * CryptoHash will hash the data and the result will be hashed by this
+     * class. Otherwise this class will hash the given data.
+     *
+     * @param input input data to hash
+     * @return hashed data as a byte array
+     */
     @Override
     public byte[] getHash(final String input) {
         byte[] result;
@@ -60,7 +90,20 @@ public abstract class AbstractCryptoHash implements CryptoHash {
         return result;
     }
 
+    /**
+     * Hashes the given data.
+     *
+     * @param input input data to hash
+     * @return hashed data as a byte array
+     * @throws IOException if an error occurred reading from input
+     */
     protected abstract byte[] computeHash(final InputStream input) throws IOException;
 
+    /**
+     * Hashes the given data.
+     *
+     * @param input input data to hash
+     * @return hashed data as a byte array
+     */
     protected abstract byte[] computeHash(final byte[] input);
 }

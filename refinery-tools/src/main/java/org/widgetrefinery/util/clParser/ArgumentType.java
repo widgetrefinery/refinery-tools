@@ -20,13 +20,38 @@ package org.widgetrefinery.util.clParser;
 import org.widgetrefinery.util.BadUserInputException;
 
 /**
+ * Defines the type of an argument, such as an argument that takes a numeric
+ * value or a boolean flag that takes no values. It is also responsible for
+ * validating and parsing the values that come in.
+ *
+ * @see org.widgetrefinery.util.clParser.Argument
  * @see org.widgetrefinery.util.clParser.CLParser
  * @since 3/4/12 6:33 PM
  */
 public interface ArgumentType {
+    /**
+     * Returns true if this argument takes a value. This should generally be
+     * true except for boolean flags.
+     *
+     * @return true if this argument type takes a value
+     */
     boolean isConsumesValue();
 
+    /**
+     * Provides a generic description for the argument. Generally the
+     * application developer should provide the description when creating an
+     * {@link org.widgetrefinery.util.clParser.Argument}.
+     *
+     * @return generic description
+     */
     String getGenericDescription();
 
-    Object parse(String value, Object oldValue) throws BadUserInputException;
+    /**
+     * Validates and parses the value associated with this argument.
+     *
+     * @param value string value from the command line
+     * @return parsed value
+     * @throws BadUserInputException if the value is invalid
+     */
+    Object parse(String value) throws BadUserInputException;
 }

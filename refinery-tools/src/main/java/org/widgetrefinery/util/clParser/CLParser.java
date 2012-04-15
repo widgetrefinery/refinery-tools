@@ -20,7 +20,7 @@ package org.widgetrefinery.util.clParser;
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
 import org.widgetrefinery.util.lang.Translator;
-import org.widgetrefinery.util.lang.UtilTranslatorKey;
+import org.widgetrefinery.util.lang.UtilTranslationKey;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +30,12 @@ import java.net.URI;
 import java.util.*;
 
 /**
- * Since: 2/20/12 8:19 PM
+ * Utility class for parsing GNU-style command line arguments. It supports
+ * short arguments like <code>"-a -b hello -cd"</code> as well as long
+ * arguments like <code>"--help --input=file"</code>. It also provides support
+ * for displaying usage info that is usually shown with -h or --help.
+ *
+ * @since 2/20/12 8:19 PM
  */
 public class CLParser {
     private static final int CONSOLE_WIDTH = 80;
@@ -39,6 +44,15 @@ public class CLParser {
     private final List<String>          leftovers;
     private       boolean               hasArguments;
 
+    /**
+     * Creates a new instance of CLParser and immediately parses the input
+     * arguments.
+     *
+     * @param inputs      input arguments to parse
+     * @param definitions list of arguments to parse with
+     * @throws IllegalArgumentException if the constructor was called with invalid values
+     * @throws BadUserInputException    if there is a problem with the input arguments
+     */
     public CLParser(final String[] inputs, final Argument... definitions) throws IllegalArgumentException, BadUserInputException {
         this.arguments = new HashMap<String, Argument>();
         for (Argument definition : definitions) {
@@ -77,16 +91,16 @@ public class CLParser {
         String name = rawName.substring(2);
         Argument argument = this.arguments.get(name);
         if (null == argument) {
-            throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_NO_SUCH_SWITCH, rawName), rawName);
+            throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_NO_SUCH_SWITCH, rawName), rawName);
         } else if (argument.isConsumesValue()) {
             if (2 == keyValuePair.length) {
                 String value = keyValuePair[1];
                 argument.parse(rawName, value);
             } else {
-                throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_SWITCH_MISSING_VALUE, rawName));
+                throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_SWITCH_MISSING_VALUE, rawName));
             }
         } else if (2 == keyValuePair.length) {
-            throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_UNEXPECTED_SWITCH_VALUE, rawName, keyValuePair[1]), keyValuePair[1]);
+            throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_UNEXPECTED_SWITCH_VALUE, rawName, keyValuePair[1]), keyValuePair[1]);
         } else {
             argument.parse(rawName, null);
         }
@@ -97,13 +111,13 @@ public class CLParser {
         String rawName = "-" + name;
         Argument argument = this.arguments.get(name);
         if (null == argument) {
-            throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_NO_SUCH_SWITCH, rawName), rawName);
+            throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_NO_SUCH_SWITCH, rawName), rawName);
         } else if (argument.isConsumesValue()) {
             if (itr.hasNext()) {
                 String value = itr.next();
                 argument.parse(rawName, value);
             } else {
-                throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_SWITCH_MISSING_VALUE, rawName));
+                throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_SWITCH_MISSING_VALUE, rawName));
             }
         } else {
             argument.parse(rawName, null);
@@ -111,39 +125,66 @@ public class CLParser {
         this.hasArguments = true;
     }
 
+    /**
+     * Returns true if the input contained at least one argument.
+     *
+     * @return true if the input contained at least one argument.
+     */
     public boolean hasArguments() {
         return this.hasArguments;
     }
 
+    /**
+     * Returns the parsed value for the given argument. The argument name can
+     * be any valid name for the argument.
+     *
+     * @param name name of argument to look up
+     * @param <T>  parsed value type
+     * @return parsed value
+     * @throws IllegalArgumentException if the argument name is invalid
+     */
     @SuppressWarnings("unchecked")
-    public <T> T getValue(final String rawName) throws IllegalArgumentException {
-        Argument argument = this.arguments.get(rawName);
+    public <T> T getValue(final String name) throws IllegalArgumentException {
+        Argument argument = this.arguments.get(name);
         if (null == argument) {
-            throw new IllegalArgumentException("no such argument (" + rawName + ')');
+            throw new IllegalArgumentException("no such argument (" + name + ')');
         }
         return (T) argument.getValue();
     }
 
+    /**
+     * Returns any arguments that were not parsed.
+     *
+     * @return leftover input data
+     */
     public List<String> getLeftovers() {
         return this.leftovers;
     }
 
+    /**
+     * Constructs a help message describing the application. The application
+     * description comes from {@link org.widgetrefinery.util.lang.Translator}
+     * while the argument descriptions come from the arguments.
+     *
+     * @param mainClass entry point into your application
+     * @return help message
+     */
     public String getHelpMessage(final Class mainClass) {
         StringBuilder sb = new StringBuilder();
 
         String command = getCommand(mainClass);
-        sb.append(StringUtil.wordWrap(Translator.get(UtilTranslatorKey.CL_HELP_USAGE, command), CONSOLE_WIDTH, "", "  "));
+        sb.append(StringUtil.wordWrap(Translator.get(UtilTranslationKey.CL_HELP_USAGE, command), CONSOLE_WIDTH, "", "  "));
         sb.append("\n\n");
 
-        String description = Translator.get(UtilTranslatorKey.CL_HELP_DESCRIPTION);
+        String description = Translator.get(UtilTranslationKey.CL_HELP_DESCRIPTION);
         if (StringUtil.isNotBlank(description)) {
             sb.append(StringUtil.wordWrap(description, CONSOLE_WIDTH, "", "  "));
             sb.append("\n\n");
         }
 
-        sb.append(StringUtil.wordWrap(Translator.get(UtilTranslatorKey.CL_HELP_OPTIONS), CONSOLE_WIDTH));
+        sb.append(StringUtil.wordWrap(Translator.get(UtilTranslationKey.CL_HELP_OPTIONS), CONSOLE_WIDTH));
         sb.append('\n');
-        String valueText = Translator.get(UtilTranslatorKey.CL_HELP_OPTIONS_SWITCH_VALUE);
+        String valueText = Translator.get(UtilTranslationKey.CL_HELP_OPTIONS_SWITCH_VALUE);
         String longSwitchValueText = "=[" + valueText + "]";
         String shortSwitchValueText = " [" + valueText + "]";
         Set<Argument> arguments = new TreeSet<Argument>(this.arguments.values());
@@ -170,7 +211,26 @@ public class CLParser {
         return sb.toString();
     }
 
-    public void displayLicense(final OutputStream outputStream) throws IOException {
+    protected String getCommand(final Class mainClass) {
+        try {
+            URI mainURI = mainClass.getProtectionDomain().getCodeSource().getLocation().toURI();
+            File file = new File(mainURI);
+            return "java -jar " + file.getName();
+        } catch (Exception e) {
+            return "java " + mainClass.getName();
+        }
+    }
+
+    /**
+     * Loads the license file and writes it to the given output stream. It
+     * expects to find the license file under the "COPYING" filename somewhere
+     * in the classpath. If the license file is not found, an error message is
+     * written to the output stream indicating this.
+     *
+     * @param outputStream output stream to write the license to
+     * @throws IOException if an IO error occurs
+     */
+    public void getLicense(final OutputStream outputStream) throws IOException {
         InputStream input = getClass().getClassLoader().getResourceAsStream("COPYING");
         if (null != input) {
             try {
@@ -183,19 +243,9 @@ public class CLParser {
                 input.close();
             }
         } else {
-            byte[] msg = StringUtil.wordWrap(Translator.get(UtilTranslatorKey.CL_ERROR_MISSING_LICENSE), CONSOLE_WIDTH).getBytes();
+            byte[] msg = StringUtil.wordWrap(Translator.get(UtilTranslationKey.CL_ERROR_MISSING_LICENSE), CONSOLE_WIDTH).getBytes();
             outputStream.write(msg);
             outputStream.flush();
-        }
-    }
-
-    protected String getCommand(final Class mainClass) {
-        try {
-            URI mainURI = mainClass.getProtectionDomain().getCodeSource().getLocation().toURI();
-            File file = new File(mainURI);
-            return "java -jar " + file.getName();
-        } catch (Exception e) {
-            return "java " + mainClass.getName();
         }
     }
 }

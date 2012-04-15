@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * Provides translation service for an application. Translations are defined in
+ * Provides the translation service for an application. Translations are defined in
  * property files.
  *
  * @see java.util.ResourceBundle
@@ -31,9 +31,6 @@ import java.util.ResourceBundle;
 public class Translator {
     private static final String DEFAULT_NAME = "translate";
     private static ResourceBundle resourceBundle;
-
-    protected Translator() {
-    }
 
     /**
      * Switch the translator to the default locale as defined by
@@ -69,10 +66,11 @@ public class Translator {
     }
 
     /**
-     * Returns the underlying {@link java.util.ResourceBundle}. If none was
-     * configured then it will load the default ResourceBundle.
+     * Returns the underlying {@link java.util.ResourceBundle}. If no
+     * ResourceBundle had been configured then it will call
+     * {@link #configure()} to load the default ResourceBundle.
      *
-     * @return ResourceBundle containing the translations
+     * @return ResourceBundle containing localized text
      */
     protected static ResourceBundle getResourceBundle() {
         if (null == resourceBundle) {
@@ -90,7 +88,7 @@ public class Translator {
      * @param params optional format objects
      * @return localized text
      */
-    public static String get(final TranslatorKey key, Object... params) {
+    public static String get(final TranslationKey key, Object... params) {
         String result = getResourceBundle().getString(key.getKey());
         if (null == result) {
             result = "{" + key.getKey() + "}";

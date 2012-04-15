@@ -25,9 +25,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Base class for application entry points. It performs common initialization
+ * work such as setting up logging.
+ *
  * @since 4/14/12 2:24 PM
  */
 public abstract class AbstractCli {
+    /**
+     * The main method should call this, passing in the command line arguments.
+     * It performs common initialization work before calling
+     * {@link #processCommandLine(String[])}.
+     *
+     * @param args command line arguments
+     */
     protected void start(final String[] args) {
         boolean debugMode = null != System.getProperty("debug");
 
@@ -52,5 +62,12 @@ public abstract class AbstractCli {
         }
     }
 
+    /**
+     * The application takes over from here. It should parse the command
+     * line and perform whatever work is desired.
+     *
+     * @param args command line arguments
+     * @throws Exception allows for any exceptions to be thrown
+     */
     protected abstract void processCommandLine(final String[] args) throws Exception;
 }

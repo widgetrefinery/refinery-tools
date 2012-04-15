@@ -25,11 +25,11 @@ package org.widgetrefinery.util.lang;
  * @see org.widgetrefinery.util.lang.Translator
  * @since 4/14/12 12:44 AM
  */
-public interface TranslatorKey {
+public interface TranslationKey {
     /**
      * The key to look up in the translation properties file.
      *
-     * @return string key
+     * @return key
      */
     String getKey();
 }

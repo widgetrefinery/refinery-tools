@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Since: 3/14/12 9:58 PM
+ * @since 3/14/12 9:58 PM
  */
 public class TestEventBus extends TestCase {
     public void testFireEvent() {

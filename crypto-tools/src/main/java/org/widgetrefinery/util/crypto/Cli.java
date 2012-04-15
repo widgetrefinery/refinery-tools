@@ -21,7 +21,7 @@ import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
 import org.widgetrefinery.util.clParser.*;
 import org.widgetrefinery.util.lang.Translator;
-import org.widgetrefinery.util.lang.UtilTranslatorKey;
+import org.widgetrefinery.util.lang.UtilTranslationKey;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class Cli extends AbstractCli {
             System.exit(0);
         }
         if (Boolean.TRUE == clParser.getValue("license")) {
-            clParser.displayLicense(System.out);
+            clParser.getLicense(System.out);
             System.exit(0);
         }
 
@@ -122,7 +122,7 @@ public class Cli extends AbstractCli {
                         cryptoHash = DigestCryptoHash.createSHA1(cryptoHash);
                         break;
                     default:
-                        throw new BadUserInputException(Translator.get(UtilTranslatorKey.CL_ERROR_BAD_SWITCH_VALUE, "encoding", encodingKey), encodingKey);
+                        throw new BadUserInputException(Translator.get(UtilTranslationKey.CL_ERROR_BAD_SWITCH_VALUE, "encoding", encodingKey), encodingKey);
                 }
             }
         }

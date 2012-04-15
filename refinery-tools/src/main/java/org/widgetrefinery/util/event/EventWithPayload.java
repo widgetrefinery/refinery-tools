@@ -18,9 +18,9 @@
 package org.widgetrefinery.util.event;
 
 /**
- * An event with a related value.
+ * An event carrying a value.
  *
- * @see {@inheritDoc}
+ * @see org.widgetrefinery.util.event.EventBus
  * @since 4/12/12 9:29 PM
  */
 public class EventWithPayload<V> implements Event {

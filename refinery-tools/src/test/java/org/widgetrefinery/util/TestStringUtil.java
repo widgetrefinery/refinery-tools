@@ -20,7 +20,7 @@ package org.widgetrefinery.util;
 import junit.framework.TestCase;
 
 /**
- * Since: 3/8/12 12:39 AM
+ * @since 3/8/12 12:39 AM
  */
 public class TestStringUtil extends TestCase {
     public void testWordWrap() {

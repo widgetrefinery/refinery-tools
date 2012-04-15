@@ -18,7 +18,11 @@
 package org.widgetrefinery.util.clParser;
 
 /**
- * Since: 3/3/12 8:47 PM
+ * Deals with arguments that are boolean flags, such as the commonly used help
+ * (--help) or verbose (-v) flags.
+ *
+ * @see org.widgetrefinery.util.clParser.CLParser
+ * @since 3/3/12 8:47 PM
  */
 public class BooleanArgumentType extends AbstractArgumentType {
     public BooleanArgumentType() {
@@ -30,8 +34,14 @@ public class BooleanArgumentType extends AbstractArgumentType {
         return "a boolean flag";
     }
 
+    /**
+     * Boolean arguments do not take a value so this just returns true.
+     *
+     * @param value string value from the command line
+     * @return true
+     */
     @Override
-    public Object parse(final String value, final Object oldValue) {
+    public Boolean parse(final String value) {
         return Boolean.TRUE;
     }
 }

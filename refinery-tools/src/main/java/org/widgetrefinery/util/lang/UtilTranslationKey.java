@@ -18,12 +18,12 @@
 package org.widgetrefinery.util.lang;
 
 /**
- * List of translator keys for the utility classes.
+ * List of translation keys for the utility classes.
  *
- * @see {@inheritDoc}
+ * @see org.widgetrefinery.util.lang.Translator
  * @since 4/14/12 11:22 AM
  */
-public enum UtilTranslatorKey implements TranslatorKey {
+public enum UtilTranslationKey implements TranslationKey {
     CL_HELP_USAGE("cl.help.usage"),
     CL_HELP_DESCRIPTION("cl.help.description"),
     CL_HELP_OPTIONS("cl.help.options"),
@@ -36,15 +36,10 @@ public enum UtilTranslatorKey implements TranslatorKey {
 
     private final String key;
 
-    private UtilTranslatorKey(final String key) {
+    private UtilTranslationKey(final String key) {
         this.key = key;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
     @Override
     public String getKey() {
         return this.key;

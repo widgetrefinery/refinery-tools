@@ -23,7 +23,7 @@ import org.widgetrefinery.util.lang.Translator;
 import java.util.Locale;
 
 /**
- * Since: 3/4/12 6:29 PM
+ * @since 3/4/12 6:29 PM
  */
 public class TestCLParser extends TestCase {
     private static final String translate = "example_translate";
@@ -37,9 +37,9 @@ public class TestCLParser extends TestCase {
     public void testDuplicateArgumentNames() {
         try {
             new CLParser(new String[0],
-                         new Argument("f|foo", new BooleanArgumentType()),
-                         new Argument("b|bar", new BooleanArgumentType()),
-                         new Argument("foo", new StringArgumentType()));
+                         new Argument("f|foo", new BooleanArgumentType(), null),
+                         new Argument("b|bar", new BooleanArgumentType(), null),
+                         new Argument("foo", new StringArgumentType(), null));
             assertTrue("constructor did not throw exception", false);
         } catch (Exception e) {
             assertEquals("duplicate argument name (foo)", e.getMessage());
@@ -49,18 +49,18 @@ public class TestCLParser extends TestCase {
     public void testIllegalArgument() {
         try {
             String[] inputs = new String[]{"-ba"};
-            new CLParser(inputs, new Argument("b", new BooleanArgumentType()));
+            new CLParser(inputs, new Argument("b", new BooleanArgumentType(), null));
             assertTrue("constructor did not throw exception", false);
         } catch (Exception e) {
             assertEquals("invalid argument (-a)", e.getMessage());
         }
 
         try {
-            String[] inputs = new String[]{"--tasukete"};
-            new CLParser(inputs, new Argument("help", new BooleanArgumentType()));
+            String[] inputs = new String[]{"--help_me"};
+            new CLParser(inputs, new Argument("help", new BooleanArgumentType(), null));
             assertTrue("constructor did not throw exception", false);
         } catch (Exception e) {
-            assertEquals("invalid argument (--tasukete)", e.getMessage());
+            assertEquals("invalid argument (--help_me)", e.getMessage());
         }
     }
 
@@ -68,8 +68,8 @@ public class TestCLParser extends TestCase {
         try {
             String[] inputs = new String[]{"-ba"};
             new CLParser(inputs,
-                         new Argument("a", new StringArgumentType()),
-                         new Argument("b", new BooleanArgumentType()));
+                         new Argument("a", new StringArgumentType(), null),
+                         new Argument("b", new BooleanArgumentType(), null));
             assertTrue("constructor did not throw exception", false);
         } catch (Exception e) {
             assertEquals("missing value for argument -a", e.getMessage());
@@ -77,7 +77,7 @@ public class TestCLParser extends TestCase {
 
         try {
             String[] inputs = new String[]{"--foo"};
-            new CLParser(inputs, new Argument("foo", new StringArgumentType()));
+            new CLParser(inputs, new Argument("foo", new StringArgumentType(), null));
             assertTrue("constructor did not throw exception", false);
         } catch (Exception e) {
             assertEquals("missing value for argument --foo", e.getMessage());
@@ -87,7 +87,7 @@ public class TestCLParser extends TestCase {
     public void testUnexpectedArgumentValue() {
         try {
             String[] inputs = new String[]{"--foo=bar"};
-            new CLParser(inputs, new Argument("foo", new BooleanArgumentType()));
+            new CLParser(inputs, new Argument("foo", new BooleanArgumentType(), null));
             assertTrue("constructor did not throw exception", false);
         } catch (Exception e) {
             assertEquals("unexpected value for argument --foo (bar)", e.getMessage());
@@ -96,7 +96,7 @@ public class TestCLParser extends TestCase {
 
     public void testHasArguments() {
         String[] inputs;
-        Argument argument = new Argument("f|foo", new BooleanArgumentType());
+        Argument argument = new Argument("f|foo", new BooleanArgumentType(), null);
         CLParser clParser;
 
         inputs = "hello world".split(" ");
@@ -115,9 +115,9 @@ public class TestCLParser extends TestCase {
     public void testParser() {
         String[] inputs = "hello -f --bar=world".split(" ");
         CLParser clParser = new CLParser(inputs,
-                                         new Argument("f|foo", new BooleanArgumentType()),
-                                         new Argument("b|bar", new StringArgumentType()),
-                                         new Argument("a|about", new BooleanArgumentType()));
+                                         new Argument("f|foo", new BooleanArgumentType(), null),
+                                         new Argument("b|bar", new StringArgumentType(), null),
+                                         new Argument("a|about", new BooleanArgumentType(), null));
 
         assertEquals(Boolean.TRUE, clParser.getValue("f"));
         assertEquals(Boolean.TRUE, clParser.getValue("foo"));
@@ -136,8 +136,8 @@ public class TestCLParser extends TestCase {
 
     public void testUsageMessage() {
         CLParser clParser = new CLParser(new String[0],
-                                         new Argument("h|help", new BooleanArgumentType(), "custom\nargument\n\tdescription"),
-                                         new Argument("f|foo|foobar", new BooleanArgumentType()));
+                                         new Argument("h|help", new BooleanArgumentType(), "Custom\nArgument\n\tDescription"),
+                                         new Argument("f|foo|foobar", new BooleanArgumentType(), null));
 
         String expectedUsage = "USAGE:\n" +
                                "  java java.lang.String [options]";
@@ -149,9 +149,9 @@ public class TestCLParser extends TestCase {
                                  "    a boolean flag\n" +
                                  "  -h\n" +
                                  "  --help\n" +
-                                 "    custom\n" +
-                                 "    argument\n" +
-                                 "        description\n";
+                                 "    Custom\n" +
+                                 "    Argument\n" +
+                                 "        Description\n";
         String msg = clParser.getHelpMessage(String.class);
         assertEquals(expectedUsage + "\n" + expectedDescription + expectedOptions, msg);
 
@@ -159,9 +159,9 @@ public class TestCLParser extends TestCase {
         Translator.configure(translate, locale);
 
         expectedDescription = "\nDESCRIPTION:\n" +
-                              "  custom\n" +
-                              "  application\n" +
-                              "    description\n";
+                              "  Custom\n" +
+                              "  Application\n" +
+                              "    Description\n";
         msg = clParser.getHelpMessage(String.class);
         assertEquals(expectedUsage + "\n" + expectedDescription + expectedOptions, msg);
     }

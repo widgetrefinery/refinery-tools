@@ -23,34 +23,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Since: 3/4/12 7:31 PM
+ * Extends an existing argument type to allow it to occur multiple times on
+ * the command line.
+ *
+ * @see org.widgetrefinery.util.clParser.CLParser
+ * @since 3/4/12 7:31 PM
  */
 public class ListArgumentType extends AbstractArgumentType {
-    private final ArgumentType listContentType;
+    private final ArgumentType argumentType;
+    private final List         values;
 
-    public ListArgumentType(final ArgumentType listContentType) {
-        super(listContentType.isConsumesValue());
-        this.listContentType = listContentType;
+    /**
+     * @param argumentType argument type to wrap
+     */
+    public ListArgumentType(final ArgumentType argumentType) {
+        super(argumentType.isConsumesValue());
+        this.argumentType = argumentType;
+        this.values = new ArrayList();
     }
 
     @Override
     public String getGenericDescription() {
-        return this.listContentType.getGenericDescription();
+        return this.argumentType.getGenericDescription();
     }
 
+    /**
+     * Uses the wrapped argument type to parse the value and then saves the
+     * result to a list.
+     *
+     * @return list of all values that have been parsed
+     * @throws BadUserInputException if the wrapped argument type failed to parse the value
+     */
     @SuppressWarnings("unchecked")
     @Override
-    public Object parse(final String value, final Object oldValue) throws BadUserInputException {
-        Object parsedValue = this.listContentType.parse(value, null);
-
-        List values;
-        if (null != oldValue && (oldValue instanceof List)) {
-            values = (List) oldValue;
-        } else {
-            values = new ArrayList<Object>();
-        }
-        values.add(parsedValue);
-
-        return values;
+    public List parse(final String value) throws BadUserInputException {
+        Object parsedValue = this.argumentType.parse(value);
+        this.values.add(parsedValue);
+        return this.values;
     }
 }

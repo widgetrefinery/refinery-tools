@@ -18,11 +18,17 @@
 package org.widgetrefinery.util.clParser;
 
 /**
+ * A base implementation of ArgumentType that other classes can build off of.
+ *
+ * @see org.widgetrefinery.util.clParser.CLParser
  * @since 3/3/12 8:46 PM
  */
 public abstract class AbstractArgumentType implements ArgumentType {
     private final boolean consumesValue;
 
+    /**
+     * @param consumesValue specify if this argument type will take a value
+     */
     protected AbstractArgumentType(final boolean consumesValue) {
         this.consumesValue = consumesValue;
     }

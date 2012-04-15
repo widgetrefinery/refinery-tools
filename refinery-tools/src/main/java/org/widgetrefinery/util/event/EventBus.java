@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  * single-thread design. This means you can run into problems if a listener
  * fires an event that triggers a listener that fires an event that triggers
  * a listener that, etc. The event bus protects against this by monitoring
- * the number of events in flight and will fail fast if this number exceeds
+ * the number of events in flight and will abort if this number exceeds
  * a certain threshold.
  *
  * @since 3/14/12 9:46 PM
@@ -63,7 +63,7 @@ public class EventBus {
     /**
      * Adds a new listener to the event bus.
      *
-     * @param clazz    event class to register the listener for
+     * @param clazz    event class to register the listener under
      * @param listener listener to register
      * @param <T>      event class
      */

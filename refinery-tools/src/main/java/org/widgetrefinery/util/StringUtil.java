@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 /**
  * Collection of helper methods for working with strings. This class was
  * inspired by <a href="http://commons.apache.org/lang/">apache commons</a>.
- * The motivation for building this class was to keep the application small.
+ * The motivation for building this class was to keep the application lean.
  *
  * @since 3/4/12 10:17 PM
  */
@@ -43,7 +43,8 @@ public class StringUtil {
     /**
      * Checks if the given string is not blank. This returns the opposite of
      * {@link #isBlank(String)}. This is provided to help keep the code clear
-     * as it can be difficult to distinguish !isBlank(str) vs isBlank(str).
+     * as it can be difficult to distinguish between <code>!isBlank(str)</code>
+     * and <code>isBlank(str)</code>.
      *
      * @param value string to check
      * @return true if not blank
@@ -82,13 +83,13 @@ public class StringUtil {
     }
 
     /**
-     * Reformat the given string so that no single line is longer than the
+     * Format the given string so that no single line is longer than the
      * given width. Wrapping is done on word boundaries. Note that tab
      * characters are replaced with a constant sequence of spaces.
      *
      * @param value string to format
      * @param width width to restrict each line to
-     * @return reformatted string
+     * @return formatted string
      * @throws IllegalArgumentException if the width is smaller than the tab size
      * @see #wordWrap(String, int, String, String)
      */
@@ -97,7 +98,7 @@ public class StringUtil {
     }
 
     /**
-     * Reformat the given string so that no single line is longer than the
+     * Format the given string so that no single line is longer than the
      * given width. Wrapping is done on word boundaries. Each new line after
      * the first will be prefixed with the given prefix. Tab characters will
      * be replaced with the given string.
@@ -106,8 +107,8 @@ public class StringUtil {
      * @param width  width to restrict each line to
      * @param prefix prefix for each line (except the first line)
      * @param tab    string to replace tab characters with
-     * @return reformatted string
-     * @throws IllegalArgumentException if the width is smaller than the prefix + tab
+     * @return formatted string
+     * @throws IllegalArgumentException if the width is smaller than prefix + tab
      */
     public static String wordWrap(final String value, final int width, final String prefix, final String tab) throws IllegalArgumentException {
         if (prefix.length() >= width) {

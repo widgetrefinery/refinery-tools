@@ -23,16 +23,29 @@ import org.widgetrefinery.util.StringUtil;
 import java.util.regex.Pattern;
 
 /**
- * Since: 3/3/12 11:36 PM
+ * Deals with arguments that are plain strings. It can optionally enforce that
+ * the value match a certain pattern.
+ *
+ * @see org.widgetrefinery.util.clParser.CLParser
+ * @since 3/3/12 11:36 PM
  */
 public class StringArgumentType extends AbstractArgumentType {
     private final Pattern expectedPattern;
 
+    /**
+     * Creates a new instance that will allow any value.
+     */
     public StringArgumentType() {
         super(true);
         this.expectedPattern = null;
     }
 
+    /**
+     * Creates a new instance that will enforce the value to match a certain
+     * pattern.
+     *
+     * @param expectedPattern the regexp pattern to check against
+     */
     public StringArgumentType(final String expectedPattern) {
         super(true);
         this.expectedPattern = Pattern.compile(expectedPattern);
@@ -43,11 +56,20 @@ public class StringArgumentType extends AbstractArgumentType {
         return "a string value";
     }
 
+    /**
+     * Trims the value before returning it. Will optionally validate the value
+     * against a regexp pattern.
+     *
+     * @param value string value from the command line
+     * @return validated string
+     * @throws BadUserInputException if the string does not match the expected pattern
+     */
     @Override
-    public Object parse(final String value, final Object oldValue) throws BadUserInputException {
+    public String parse(String value) throws BadUserInputException {
+        value = StringUtil.trimToEmpty(value);
         if (null != this.expectedPattern && !this.expectedPattern.matcher(value).matches()) {
             throw new BadUserInputException("invalid value", value);
         }
-        return StringUtil.trimToEmpty(value);
+        return value;
     }
 }

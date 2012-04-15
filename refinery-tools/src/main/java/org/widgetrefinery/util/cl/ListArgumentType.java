@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.widgetrefinery.util.clParser;
+package org.widgetrefinery.util.cl;
 
 import org.widgetrefinery.util.BadUserInputException;
 
@@ -26,7 +26,7 @@ import java.util.List;
  * Extends an existing argument type to allow it to occur multiple times on
  * the command line.
  *
- * @see org.widgetrefinery.util.clParser.CLParser
+ * @see org.widgetrefinery.util.cl.CLParser
  * @since 3/4/12 7:31 PM
  */
 public class ListArgumentType extends AbstractArgumentType {

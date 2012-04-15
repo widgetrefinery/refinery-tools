@@ -15,26 +15,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.widgetrefinery.util.clParser;
+package org.widgetrefinery.util.cl;
 
 /**
- * A base implementation of ArgumentType that other classes can build off of.
+ * Deals with arguments that are boolean flags, such as the commonly used help
+ * (--help) or verbose (-v) flags.
  *
- * @see org.widgetrefinery.util.clParser.CLParser
- * @since 3/3/12 8:46 PM
+ * @see org.widgetrefinery.util.cl.CLParser
+ * @since 3/3/12 8:47 PM
  */
-public abstract class AbstractArgumentType implements ArgumentType {
-    private final boolean consumesValue;
-
-    /**
-     * @param consumesValue specify if this argument type will take a value
-     */
-    protected AbstractArgumentType(final boolean consumesValue) {
-        this.consumesValue = consumesValue;
+public class BooleanArgumentType extends AbstractArgumentType {
+    public BooleanArgumentType() {
+        super(false);
     }
 
     @Override
-    public boolean isConsumesValue() {
-        return this.consumesValue;
+    public String getGenericDescription() {
+        return "a boolean flag";
+    }
+
+    /**
+     * Boolean arguments do not take a value so this just returns true.
+     *
+     * @param value string value from the command line
+     * @return true
+     */
+    @Override
+    public Boolean parse(final String value) {
+        return Boolean.TRUE;
     }
 }

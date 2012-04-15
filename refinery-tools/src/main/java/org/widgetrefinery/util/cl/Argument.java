@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.widgetrefinery.util.clParser;
+package org.widgetrefinery.util.cl;
 
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
@@ -25,10 +25,10 @@ import org.widgetrefinery.util.lang.UtilTranslationKey;
 /**
  * Represents a single argument on the command line. An argument can contain
  * multiple names (i.e. "-h" and "--help"), a description, an
- * {@link org.widgetrefinery.util.clParser.ArgumentType} for parsing values,
+ * {@link org.widgetrefinery.util.cl.ArgumentType} for parsing values,
  * and the value itself.
  *
- * @see org.widgetrefinery.util.clParser.CLParser
+ * @see org.widgetrefinery.util.cl.CLParser
  * @since 3/3/12 8:53 PM
  */
 public class Argument implements Comparable<Argument> {

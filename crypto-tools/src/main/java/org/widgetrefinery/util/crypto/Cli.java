@@ -19,7 +19,7 @@ package org.widgetrefinery.util.crypto;
 
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
-import org.widgetrefinery.util.clParser.*;
+import org.widgetrefinery.util.cl.*;
 import org.widgetrefinery.util.lang.Translator;
 import org.widgetrefinery.util.lang.UtilTranslationKey;
 
@@ -30,7 +30,7 @@ import java.util.List;
 
 /**
  * Provides a command-line interface to the hashing functions. This was built
- * mostly to test out {@link org.widgetrefinery.util.clParser.CLParser}.
+ * mostly to test out {@link org.widgetrefinery.util.cl.CLParser}.
  *
  * @since 3/1/12 10:49 PM
  */

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.widgetrefinery.util.clParser;
+package org.widgetrefinery.util.cl;
 
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * Deals with arguments that are plain strings. It can optionally enforce that
  * the value match a certain pattern.
  *
- * @see org.widgetrefinery.util.clParser.CLParser
+ * @see org.widgetrefinery.util.cl.CLParser
  * @since 3/3/12 11:36 PM
  */
 public class StringArgumentType extends AbstractArgumentType {

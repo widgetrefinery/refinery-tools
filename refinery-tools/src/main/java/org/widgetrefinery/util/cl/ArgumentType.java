@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.widgetrefinery.util.clParser;
+package org.widgetrefinery.util.cl;
 
 import org.widgetrefinery.util.BadUserInputException;
 
@@ -24,8 +24,8 @@ import org.widgetrefinery.util.BadUserInputException;
  * value or a boolean flag that takes no values. It is also responsible for
  * validating and parsing the values that come in.
  *
- * @see org.widgetrefinery.util.clParser.Argument
- * @see org.widgetrefinery.util.clParser.CLParser
+ * @see org.widgetrefinery.util.cl.Argument
+ * @see org.widgetrefinery.util.cl.CLParser
  * @since 3/4/12 6:33 PM
  */
 public interface ArgumentType {
@@ -40,7 +40,7 @@ public interface ArgumentType {
     /**
      * Provides a generic description for the argument. Generally the
      * application developer should provide the description when creating an
-     * {@link org.widgetrefinery.util.clParser.Argument}.
+     * {@link org.widgetrefinery.util.cl.Argument}.
      *
      * @return generic description
      */

@@ -26,12 +26,10 @@ import java.util.Locale;
  * @since 3/4/12 6:29 PM
  */
 public class TestCLParser extends TestCase {
-    private static final String translate = "example_translate";
-
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        Translator.configure(translate, Locale.getDefault());
+    public void tearDown() throws Exception {
+        Translator.configure();
+        super.tearDown();
     }
 
     public void testDuplicateArgumentNames() {
@@ -156,7 +154,7 @@ public class TestCLParser extends TestCase {
         assertEquals(expectedUsage + "\n" + expectedDescription + expectedOptions, msg);
 
         Locale locale = new Locale("test_cl_description");
-        Translator.configure(translate, locale);
+        Translator.configure(locale);
 
         expectedDescription = "\nDESCRIPTION:\n" +
                               "  Custom\n" +

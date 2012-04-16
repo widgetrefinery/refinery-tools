@@ -20,10 +20,9 @@ package org.widgetrefinery.util.cl;
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.lang.Translator;
 
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.logging.*;
 
 /**
  * Base class for application entry points. It performs common initialization
@@ -43,8 +42,13 @@ public abstract class AbstractCli {
         boolean debugMode = null != System.getProperty("debug");
 
         if (debugMode) {
+            Logger globalLogger = Logger.getLogger("");
+            for (Handler h : globalLogger.getHandlers()) {
+                globalLogger.removeHandler(h);
+            }
             Handler handler = new ConsoleHandler();
             handler.setLevel(Level.FINEST);
+            handler.setFormatter(new LogFormatter());
             Logger logger = Logger.getLogger("org.widgetrefinery");
             logger.setLevel(Level.FINEST);
             logger.addHandler(handler);
@@ -74,4 +78,28 @@ public abstract class AbstractCli {
      * @throws Exception allows for any exceptions to be thrown
      */
     protected abstract void processCommandLine(final String[] args) throws Exception;
+
+    /**
+     * Custom log formatter which formats log entries as:
+     * <p/>
+     * <code>yyyy-MM-dd HH:mm:ss.SSS Z [thread] [level] [class] [msg]</code>
+     */
+    protected static class LogFormatter extends Formatter {
+        private final MessageFormat format;
+
+        public LogFormatter() {
+            this.format = new MessageFormat("{0,date,yyyy-MM-dd HH:mm:ss.SSS Z} {1} {2} {3} {4}\n");
+        }
+
+        @Override
+        public String format(final LogRecord logRecord) {
+            return this.format.format(new Object[]{
+                    new Date(logRecord.getMillis()),
+                    logRecord.getThreadID(),
+                    logRecord.getLevel(),
+                    logRecord.getSourceClassName(),
+                    logRecord.getMessage(),
+            });
+        }
+    }
 }

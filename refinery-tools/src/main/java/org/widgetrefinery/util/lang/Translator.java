@@ -62,7 +62,7 @@ public class Translator {
      * @param locale the new locale
      */
     public static void configure(final String name, final Locale locale) {
-        resourceBundle = ResourceBundle.getBundle(name, locale);
+        resourceBundle = ResourceBundle.getBundle(name, locale, new UTF8PropertiesControl());
     }
 
     /**

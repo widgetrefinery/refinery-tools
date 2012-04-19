@@ -101,7 +101,8 @@ public class EventBus {
         EventLog eventLog = new EventLog(event, Thread.currentThread().getStackTrace()[2]);
         this.queue.add(eventLog);
 
-        for (Map.Entry<EventListener, Class> entry : this.listeners.entrySet()) {
+        List<Map.Entry<EventListener, Class>> entries = new ArrayList<Map.Entry<EventListener, Class>>(this.listeners.entrySet());
+        for (Map.Entry<EventListener, Class> entry : entries) {
             EventListener listener = entry.getKey();
             Class eventClass = entry.getValue();
             if (eventClass.isAssignableFrom(event.getClass())) {

@@ -82,7 +82,9 @@ public class Translator {
     /**
      * Returns the localized text for the given key. If format objects are
      * provided, the localized text is run through
-     * {@link java.text.MessageFormat#format(String, Object...)}.
+     * {@link java.text.MessageFormat#format(String, Object...)}. If the key is
+     * not defined, the string "{$key}" is returned where $key is the value
+     * from the key parameter.
      *
      * @param key    lookup key
      * @param params optional format objects
@@ -96,5 +98,23 @@ public class Translator {
             result = MessageFormat.format(result, params);
         }
         return result;
+    }
+
+    /**
+     * Returns the value for the given key as an integer.
+     *
+     * @param key lookup key
+     * @return integer value associated with the given key
+     * @throws NumberFormatException if the associated value cannot be parsed
+     */
+    public static int getInt(final TranslationKey key) throws NumberFormatException {
+        String result = getResourceBundle().getString(key.getKey());
+        try {
+            return Integer.valueOf(result);
+        } catch (Exception e) {
+            NumberFormatException ex = new NumberFormatException("failed to parse value for " + key.getKey() + ": " + result);
+            ex.initCause(e);
+            throw ex;
+        }
     }
 }

@@ -38,8 +38,6 @@ import java.util.*;
  * @since 2/20/12 8:19 PM
  */
 public class CLParser {
-    private static final int CONSOLE_WIDTH = 80;
-
     private final Map<String, Argument> arguments;
     private final List<String>          leftovers;
     private       boolean               hasArguments;
@@ -171,18 +169,19 @@ public class CLParser {
      */
     public String getHelpMessage(final Class mainClass) {
         StringBuilder sb = new StringBuilder();
+        int consoleWidth = Translator.getInt(UtilTranslationKey.CONFIG_CL_WIDTH);
 
         String command = getCommand(mainClass);
-        sb.append(StringUtil.wordWrap(Translator.get(UtilTranslationKey.CL_HELP_USAGE, command), CONSOLE_WIDTH, "", "  "));
+        sb.append(StringUtil.wordWrap(Translator.get(UtilTranslationKey.CL_HELP_USAGE, command), consoleWidth, "", "  "));
         sb.append("\n\n");
 
         String description = Translator.get(UtilTranslationKey.CL_HELP_DESCRIPTION);
         if (StringUtil.isNotBlank(description)) {
-            sb.append(StringUtil.wordWrap(description, CONSOLE_WIDTH, "", "  "));
+            sb.append(StringUtil.wordWrap(description, consoleWidth, "", "  "));
             sb.append("\n\n");
         }
 
-        sb.append(StringUtil.wordWrap(Translator.get(UtilTranslationKey.CL_HELP_OPTIONS), CONSOLE_WIDTH));
+        sb.append(StringUtil.wordWrap(Translator.get(UtilTranslationKey.CL_HELP_OPTIONS), consoleWidth));
         sb.append('\n');
         String valueText = Translator.get(UtilTranslationKey.CL_HELP_OPTIONS_SWITCH_VALUE);
         String longSwitchValueText = "=[" + valueText + "]";
@@ -204,7 +203,7 @@ public class CLParser {
                 }
                 sb.append("\n");
             }
-            String argumentDescription = StringUtil.wordWrap(argument.getDescription().trim(), CONSOLE_WIDTH, "    ", "    ");
+            String argumentDescription = StringUtil.wordWrap(argument.getDescription().trim(), consoleWidth, "    ", "    ");
             sb.append(argumentDescription).append("\n");
         }
 
@@ -243,7 +242,8 @@ public class CLParser {
                 input.close();
             }
         } else {
-            byte[] msg = StringUtil.wordWrap(Translator.get(UtilTranslationKey.CL_ERROR_MISSING_LICENSE), CONSOLE_WIDTH).getBytes();
+            int consoleWidth = Translator.getInt(UtilTranslationKey.CONFIG_CL_WIDTH);
+            byte[] msg = StringUtil.wordWrap(Translator.get(UtilTranslationKey.CL_ERROR_MISSING_LICENSE), consoleWidth).getBytes();
             outputStream.write(msg);
             outputStream.flush();
         }

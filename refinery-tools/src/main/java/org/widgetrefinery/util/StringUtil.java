@@ -17,6 +17,9 @@
 
 package org.widgetrefinery.util;
 
+import org.widgetrefinery.util.lang.TranslationKey;
+import org.widgetrefinery.util.lang.Translator;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,12 +86,35 @@ public class StringUtil {
     }
 
     /**
-     * Format the given string so that no single line is longer than the
-     * given width. Wrapping is done on word boundaries. Note that tab
-     * characters are replaced with a constant sequence of spaces.
+     * Format the given string so that no single line is longer than the given
+     * width. Wrapping is done on word boundaries. Note that tab characters are
+     * replaced with a constant sequence of spaces. This version uses html tags
+     * to express newlines instead of the newline character ('\n'). Swing
+     * components do not understand '\n' but they can parse html.
+     *
+     * @param valueKey string to format
+     * @param widthKey width to restrict each line to, in characters
+     * @return formatted string
+     * @throws IllegalArgumentException if the width is smaller than the tab size
+     * @see #wordWrap(String, int, String, String)
+     */
+    public static String swingWordWrap(final TranslationKey valueKey, final TranslationKey widthKey) throws IllegalArgumentException {
+        String value = Translator.get(valueKey);
+        int width = Translator.getInt(widthKey);
+        String formatted = wordWrap(value, width);
+        if (formatted.contains("\n")) {
+            formatted = "<html>" + formatted.replace("\n", "<br>") + "</html>";
+        }
+        return formatted;
+    }
+
+    /**
+     * Format the given string so that no single line is longer than the given
+     * width. Wrapping is done on word boundaries. Note that tab characters are
+     * replaced with a constant sequence of spaces.
      *
      * @param value string to format
-     * @param width width to restrict each line to
+     * @param width width to restrict each line to, in characters
      * @return formatted string
      * @throws IllegalArgumentException if the width is smaller than the tab size
      * @see #wordWrap(String, int, String, String)
@@ -98,13 +124,13 @@ public class StringUtil {
     }
 
     /**
-     * Format the given string so that no single line is longer than the
-     * given width. Wrapping is done on word boundaries. Each new line after
-     * the first will be prefixed with the given prefix. Tab characters will
-     * be replaced with the given string.
+     * Format the given string so that no single line is longer than the given
+     * width. Wrapping is done on word boundaries. Each new line after the
+     * first will be prefixed with the given prefix. Tab characters will be
+     * replaced with the given string.
      *
      * @param value  string to format
-     * @param width  width to restrict each line to
+     * @param width  width to restrict each line to, in characters
      * @param prefix prefix for each line (except the first line)
      * @param tab    string to replace tab characters with
      * @return formatted string
@@ -132,9 +158,24 @@ public class StringUtil {
                 if (curLineWidth + whitespace.length() + length <= width) {
                     sb.append(whitespace);
                     curLineWidth += whitespace.length();
-                } else {
+                } else if (length <= width / 3) {
                     sb.append('\n').append(prefix);
                     curLineWidth = prefix.length();
+                } else {
+                    if (curLineWidth + whitespace.length() < width) {
+                        sb.append(whitespace);
+                        curLineWidth += whitespace.length();
+                    } else {
+                        sb.append('\n').append(prefix);
+                        curLineWidth = prefix.length();
+                    }
+                    while (curLineWidth + word.length() > width) {
+                        String next = word.substring(0, width - curLineWidth);
+                        sb.append(next).append('\n').append(prefix);
+                        word = word.substring(next.length());
+                        curLineWidth = prefix.length();
+                    }
+                    length = word.length();
                 }
                 sb.append(word);
                 curLineWidth += length;
@@ -156,8 +197,22 @@ public class StringUtil {
         String remaining = value.substring(startNdx);
         if (curLineWidth + whitespace.length() + remaining.length() <= width) {
             sb.append(whitespace);
-        } else {
+        } else if (remaining.length() <= width / 3) {
             sb.append('\n').append(prefix);
+        } else {
+            if (curLineWidth + whitespace.length() < width) {
+                sb.append(whitespace);
+                curLineWidth += whitespace.length();
+            } else {
+                sb.append('\n').append(prefix);
+                curLineWidth = prefix.length();
+            }
+            while (curLineWidth + remaining.length() > width) {
+                String next = remaining.substring(0, width - curLineWidth);
+                sb.append(next).append('\n').append(prefix);
+                remaining = remaining.substring(next.length());
+                curLineWidth = prefix.length();
+            }
         }
         sb.append(remaining);
 

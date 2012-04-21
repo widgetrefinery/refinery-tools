@@ -30,9 +30,17 @@ public class TestStringUtil extends TestCase {
         //end of word hits wrap boundary
         assertEquals(" 123 567\n 901 34", StringUtil.wordWrap("123 567 901 34", 8, " ", "  "));
         //word sits on wrap boundary
-        assertEquals(" 1234\n 678 01", StringUtil.wordWrap("1234 678 01", 8, " ", "  "));
+        assertEquals(" 1234\n 67 90", StringUtil.wordWrap("1234  67 90", 8, " ", "  "));
         //word starts on wrap boundary
         assertEquals(" 123 56\n 890 234", StringUtil.wordWrap("123 56 890 234", 8, " ", "  "));
+        //long word in the middle of the sentence gets chopped up
+        assertEquals(" 1234 67\n 89 78", StringUtil.wordWrap("1234 6789 78", 8, " ", "  "));
+        //super-long word in the middle of the sentence gets chopped up
+        assertEquals(" 1234 67\n 8901234\n 5 78", StringUtil.wordWrap("1234 6789012345 78", 8, " ", "  "));
+        //long word at the end of the sentence gets chopped up
+        assertEquals(" 123 567\n 90 2345\n 67", StringUtil.wordWrap("123 567 90 234567", 8, " ", "  "));
+        //super-long word at the end of the sentence gets chopped up
+        assertEquals(" 123 567\n 90 2345\n 6789012\n 34", StringUtil.wordWrap("123 567 90 2345678901234", 8, " ", "  "));
 
         //newline in the middle of a sentence
         assertEquals(" 123\n 567 90", StringUtil.wordWrap("123\n567 90", 8, " ", "  "));

@@ -32,7 +32,8 @@ public enum UtilTranslationKey implements TranslationKey {
     CL_ERROR_SWITCH_MISSING_VALUE("cl.error.switch_missing_value"),
     CL_ERROR_UNEXPECTED_SWITCH_VALUE("cl.error.unexpected_switch_value"),
     CL_ERROR_BAD_SWITCH_VALUE("cl.error.bad_switch_value"),
-    CL_ERROR_MISSING_LICENSE("cl.error.missing_license");
+    CL_ERROR_MISSING_LICENSE("cl.error.missing_license"),
+    CONFIG_CL_WIDTH("config.cl.width");
 
     private final String key;
 

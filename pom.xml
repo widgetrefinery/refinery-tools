@@ -46,6 +46,16 @@
                         <finalName>${project.artifactId}</finalName>
                         <appendAssemblyId>false</appendAssemblyId>
                         <attach>false</attach>
+                        <archive>
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                            <manifest>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                            <manifestEntries>
+                                <Built-By>${project.groupId}</Built-By>
+                                <Build-Date>${maven.build.timestamp}</Build-Date>
+                            </manifestEntries>
+                        </archive>
                     </configuration>
                 </plugin>
             </plugins>

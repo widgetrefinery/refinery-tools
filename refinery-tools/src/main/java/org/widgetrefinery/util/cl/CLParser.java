@@ -19,12 +19,12 @@ package org.widgetrefinery.util.cl;
 
 import org.widgetrefinery.util.BadUserInputException;
 import org.widgetrefinery.util.StringUtil;
+import org.widgetrefinery.util.lang.TranslationKey;
 import org.widgetrefinery.util.lang.Translator;
 import org.widgetrefinery.util.lang.UtilTranslationKey;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.*;
@@ -38,6 +38,9 @@ import java.util.*;
  * @since 2/20/12 8:19 PM
  */
 public class CLParser {
+    public static final String LICENSE_ABSTRACT_RESOURCE = "COPYING.abstract";
+    public static final String LICENSE_RESOURCE          = "COPYING";
+
     private final Map<String, Argument> arguments;
     private final List<String>          leftovers;
     private       boolean               hasArguments;
@@ -222,6 +225,19 @@ public class CLParser {
 
     /**
      * Loads the license file and writes it to the given output stream. It
+     * expects to find the license file under the "COPYING.abstract" filename
+     * somewhere in the classpath. If the license file is not found, an error
+     * message is written to the output stream indicating this.
+     *
+     * @param outputStream output stream to write the license to
+     * @throws IOException if an IO error occurs
+     */
+    public void getLicenseAbstract(final OutputStream outputStream) throws IOException {
+        loadResource(LICENSE_ABSTRACT_RESOURCE, UtilTranslationKey.CL_ERROR_MISSING_LICENSE, outputStream);
+    }
+
+    /**
+     * Loads the license file and writes it to the given output stream. It
      * expects to find the license file under the "COPYING" filename somewhere
      * in the classpath. If the license file is not found, an error message is
      * written to the output stream indicating this.
@@ -230,20 +246,23 @@ public class CLParser {
      * @throws IOException if an IO error occurs
      */
     public void getLicense(final OutputStream outputStream) throws IOException {
-        InputStream input = getClass().getClassLoader().getResourceAsStream("COPYING");
-        if (null != input) {
-            try {
-                byte[] buffer = new byte[1024];
-                for (int bytesRead = input.read(buffer); 0 < bytesRead; bytesRead = input.read(buffer)) {
-                    outputStream.write(buffer, 0, bytesRead);
-                }
-                outputStream.flush();
-            } finally {
-                input.close();
-            }
-        } else {
+        loadResource(LICENSE_RESOURCE, UtilTranslationKey.CL_ERROR_MISSING_LICENSE, outputStream);
+    }
+
+    /**
+     * Loads the given resource and writes it to the given output stream. If
+     * the resource cannot be found, the error message is written to the
+     * output stream.
+     *
+     * @param name         resource name
+     * @param errorMsg     error message to write if the resource is missing
+     * @param outputStream output stream to write data to
+     * @throws IOException if an IO error occurs
+     */
+    protected void loadResource(final String name, final TranslationKey errorMsg, final OutputStream outputStream) throws IOException {
+        if (!StringUtil.loadResource(name, outputStream)) {
             int consoleWidth = Translator.getInt(UtilTranslationKey.CONFIG_CL_WIDTH);
-            byte[] msg = StringUtil.wordWrap(Translator.get(UtilTranslationKey.CL_ERROR_MISSING_LICENSE), consoleWidth).getBytes();
+            byte[] msg = StringUtil.wordWrap(Translator.get(errorMsg), consoleWidth).getBytes();
             outputStream.write(msg);
             outputStream.flush();
         }

@@ -20,6 +20,7 @@ package org.widgetrefinery.util;
 import org.widgetrefinery.util.lang.TranslationKey;
 import org.widgetrefinery.util.lang.Translator;
 
+import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -217,5 +218,46 @@ public class StringUtil {
         sb.append(remaining);
 
         return sb.toString();
+    }
+
+    /**
+     * Loads the given resource and writes it to the given output stream.
+     *
+     * @param name         resource name
+     * @param outputStream output stream to write data to
+     * @return true if the resource was found
+     * @throws IOException if an IO error occurs
+     */
+    public static boolean loadResource(final String name, final OutputStream outputStream) throws IOException {
+        InputStream input = StringUtil.class.getClassLoader().getResourceAsStream(name);
+        boolean success = null != input;
+        if (success) {
+            try {
+                byte[] buffer = new byte[1024];
+                for (int bytesRead = input.read(buffer); 0 < bytesRead; bytesRead = input.read(buffer)) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+                outputStream.flush();
+            } finally {
+                input.close();
+            }
+        }
+        return success;
+    }
+
+    /**
+     * Convenience method for loading a resource into a string object.
+     *
+     * @param name resource name
+     * @return contents of the given resource or null
+     * @throws IOException if an IO error occurs
+     */
+    public static String loadResource(final String name) throws IOException {
+        String result = null;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        if (loadResource(name, new PrintStream(outputStream))) {
+            result = new String(outputStream.toByteArray(), "UTF-8");
+        }
+        return result;
     }
 }

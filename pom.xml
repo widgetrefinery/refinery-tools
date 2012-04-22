@@ -15,6 +15,7 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssZ</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <appVersion>${maven.build.timestamp}</appVersion>
     </properties>
     <modules>
         <module>crypto-tools</module>
